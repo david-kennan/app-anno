@@ -21,17 +21,19 @@ public class AnnoPlugin {
    * @param activity
    * @param gestureViewId
    */
-  public static void supportGesture(Activity activity, int gestureViewId) {
+  public static void setEnableGesture(Activity activity, int gestureViewId,
+      boolean enabled) {
     GestureOverlayView gestureOverlayView = (GestureOverlayView) activity
         .findViewById(gestureViewId);
-    gestureOverlayView.setGestureVisible(false);
-    ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
-        activity, R.raw.gestures);
-    gestureOverlayView.addOnGesturePerformedListener(gesturePerformedListener);
-  }
-
-  public static void supportHotkey() {
-    // TODO:
+    if (enabled) {
+      gestureOverlayView.setGestureVisible(false);
+      ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
+          activity, R.raw.gestures);
+      gestureOverlayView
+          .addOnGesturePerformedListener(gesturePerformedListener);
+    } else {
+      gestureOverlayView.removeAllOnGesturePerformedListeners();
+    }
   }
 
 }

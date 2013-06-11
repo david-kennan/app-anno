@@ -140,7 +140,7 @@ public class FeedbackEditActivity extends Activity {
    * 
    */
   private void onComment() {
-    actionBar.hide();
+    if (actionBar != null) actionBar.hide();
     commentAreaLayout.setVisibility(View.VISIBLE);
   }
 
