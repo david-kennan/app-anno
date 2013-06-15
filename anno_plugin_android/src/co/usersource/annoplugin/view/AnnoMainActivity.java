@@ -1,4 +1,4 @@
-package co.usersource.anno.view;
+package co.usersource.annoplugin.view;
 
 import android.content.ContentUris;
 import android.content.Intent;
@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import co.usersource.anno.R;
+import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 
@@ -54,7 +54,10 @@ public class AnnoMainActivity extends FragmentActivity implements
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.main);
+    setContentView(R.layout.anno_home);
+
+    getActionBar().setTitle(R.string.plugin_name);
+    getActionBar().setLogo(R.drawable.anno_ic_launcher);
 
     setComponent();
   }

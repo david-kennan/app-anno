@@ -19,6 +19,7 @@
             android:layout_marginTop="@dimen/comment_area_marginTop_default"
             anno:arrow_boundary="20dp" >
         </co.usersource.annoplugin.view.custom.CommentAreaLayout>
+        
     </RelativeLayout>
 
 </RelativeLayout>

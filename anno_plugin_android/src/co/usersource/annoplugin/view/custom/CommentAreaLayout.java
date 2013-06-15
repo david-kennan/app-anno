@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -23,6 +25,7 @@ public class CommentAreaLayout extends RelativeLayout {
   private EditTextLayout commentLayout;
   private EditText commentInput;
   private LinearLayout commentActionBar;
+  private Button goHomeButton;
   private float boundary;
   private static final float DEFAULT_BOUNDARY = 10;
   private boolean circleOnTop = true;
@@ -191,6 +194,13 @@ public class CommentAreaLayout extends RelativeLayout {
     return commentActionBar;
   }
 
+  private Button getHomeButton() {
+    if (goHomeButton == null) {
+      goHomeButton = (Button) findViewById(R.id.btnGoHome);
+    }
+    return goHomeButton;
+  }
+
   public void setChangable(boolean isChangable) {
     getCircleArrow().setMovable(isChangable);
   }
@@ -204,6 +214,8 @@ public class CommentAreaLayout extends RelativeLayout {
         .getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(getCommentInput().getWindowToken(),
         InputMethodManager.RESULT_UNCHANGED_SHOWN);
+
+    getHomeButton().setVisibility(View.GONE);
   }
 
 }

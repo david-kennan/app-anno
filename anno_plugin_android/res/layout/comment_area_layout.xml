@@ -19,6 +19,18 @@
         anno:circle_left="110dp"
         anno:circle_radius="20dp" />
 
+    <Button
+        android:id="@+id/btnGoHome"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/comment_button_height"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/send_comment_button"
+        android:layout_marginLeft="200dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="@string/go_home"
+        android:textColor="@android:color/black" />
+
     <LinearLayout
         android:id="@+id/commentActionBar"
         android:layout_width="match_parent"
@@ -59,9 +71,9 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/comment_button_height"
             android:layout_marginLeft="@dimen/comment_button_margin"
+            android:background="@drawable/send_comment_button"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
-            android:background="@drawable/send_comment_button"
             android:text="@string/send_comment"
             android:textColor="@android:color/black" />
     </LinearLayout>

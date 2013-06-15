@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +51,7 @@ public class FeedbackEditActivity extends Activity {
   private ActionBar actionBar;
   private EditText etComment;
   private Button btnComment;
+  private Button btnGoHome;
 
   /**
    * token id represents inserting a comment in an async process.
@@ -86,13 +88,47 @@ public class FeedbackEditActivity extends Activity {
     imvScreenshot = (RelativeLayout) findViewById(R.id.imvScreenshot);
     etComment = (EditText) findViewById(R.id.etComment);
     btnComment = (Button) findViewById(R.id.btnComment);
+    btnGoHome = (Button) findViewById(R.id.btnGoHome);
     commentAreaLayout = (CommentAreaLayout) findViewById(R.id.commentArea);
     actionBar = getActionBar();
 
     btnComment.setOnClickListener(sendCommentClickListener);
+    btnGoHome.setOnClickListener(goHomeClickListener);
+    etComment.setOnTouchListener(commentTouchListener);
 
     onComment();
   }
+
+  private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
+
+    @Override
+    public void onClick(View v) {
+      String packageName = FeedbackEditActivity.this.getPackageName();
+      // finish current activity.
+      FeedbackEditActivity.this.finish();
+      // launch anno home activity.
+      Intent intent = new Intent();
+      intent.setClassName(packageName,
+          "co.usersource.annoplugin.view.AnnoMainActivity");
+      startActivity(intent);
+    }
+  };
+
+  private View.OnTouchListener commentTouchListener = new View.OnTouchListener() {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see android.view.View.OnTouchListener#onTouch(android.view.View,
+     * android.view.MotionEvent)
+     */
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+      ViewUtils.displayError(FeedbackEditActivity.this, "comment touched.");
+      return false;
+    }
+
+  };
 
   private View.OnClickListener sendCommentClickListener = new View.OnClickListener() {
 
@@ -140,7 +176,8 @@ public class FeedbackEditActivity extends Activity {
    * 
    */
   private void onComment() {
-    if (actionBar != null) actionBar.hide();
+    if (actionBar != null)
+      actionBar.hide();
     commentAreaLayout.setVisibility(View.VISIBLE);
   }
 

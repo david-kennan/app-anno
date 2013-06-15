@@ -1,4 +1,4 @@
-package co.usersource.anno.view;
+package co.usersource.annoplugin.view;
 
 import java.lang.ref.WeakReference;
 
@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import co.usersource.anno.R;
+import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.ImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;

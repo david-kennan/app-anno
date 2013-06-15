@@ -2,28 +2,5 @@
 <resources>
 
     <string name="app_name">Anno</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_feedback">FeedbackActivity</string>
-
-    <!-- action button names on action bar of FeedbackActivity -->
-    <string name="feedback_comment">Comment</string>
-    <string name="feedback_draw">Draw</string>
-    <string name="feedback_audio">Audio</string>
-    <string name="send_comment">Send</string>
-
-    <!-- error message -->
-    <string name="erorr_title">Error</string>
-    <string name="fail_create_directory">Create directory %s failed.</string>
-    <string name="fail_enough_sdcard_space">No enough space on SD card.</string>
-    <string name="fail_send_comment">Send comment failed.</string>
-    <string name="invalid_comment_empty">You should enter some comments.</string>
-
-    <!-- success message -->
-    <string name="success_send_comment">Send comment successfully.</string>
-    <string name="title_activity_feedback_view">FeedbackViewActivity</string>
-    <string name="hello_world">Hello world!</string>
-
-    <!-- text hint -->
-    <string name="comment_hint">Enter comment here.</string>
 
 </resources>

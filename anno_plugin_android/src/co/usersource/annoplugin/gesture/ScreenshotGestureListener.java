@@ -91,14 +91,15 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
     Bitmap b = ScreenshotUtils.takeScreenshot(activity);
     FileOutputStream fos = null;
     try {
-      String screenshotPath = new File(
+      File screenshotDir = new File(
           Environment
               .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-          SCREENSHOTS_DIR_NAME).getAbsolutePath()
-          + "/" + ScreenshotUtils.generateScreenshotName();
+          SCREENSHOTS_DIR_NAME);
+      File screenshotPath = new File(screenshotDir,
+          ScreenshotUtils.generateScreenshotName());
       fos = new FileOutputStream(screenshotPath);
       b.compress(Bitmap.CompressFormat.PNG, 100, fos);
-      return screenshotPath;
+      return screenshotPath.getAbsolutePath();
     } catch (FileNotFoundException e) {
       throw e;
     } finally {

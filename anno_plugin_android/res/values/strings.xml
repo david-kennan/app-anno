@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">anno_plugin_android</string>
+    <string name="plugin_name">Anno</string>
 
     <!-- action button names on action bar of FeedbackActivity -->
     <string name="feedback_comment">Comment</string>
     <string name="feedback_draw">Draw</string>
     <string name="feedback_audio">Audio</string>
     <string name="send_comment">Send</string>
+    <string name="go_home">Home</string>
 
     <!-- error message -->
     <string name="erorr_title">Error</string>
