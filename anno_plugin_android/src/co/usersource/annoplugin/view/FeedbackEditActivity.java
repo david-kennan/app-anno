@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.ImageManage;
@@ -69,6 +70,8 @@ public class FeedbackEditActivity extends Activity {
 
     setComponents();
     handleIntent();
+    
+    AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
   }
 
   private void handleIntent() {
@@ -79,7 +82,6 @@ public class FeedbackEditActivity extends Activity {
     if (Intent.ACTION_SEND.equals(action) && type != null) {
       if (type.startsWith("image/")) {
         handleFromShareImage(intent);
-        Log.d(TAG, "package name:" + this.getPackageName());
       }
     }
   }
@@ -94,7 +96,6 @@ public class FeedbackEditActivity extends Activity {
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);
-    etComment.setOnTouchListener(commentTouchListener);
 
     onComment();
   }
@@ -106,28 +107,13 @@ public class FeedbackEditActivity extends Activity {
       String packageName = FeedbackEditActivity.this.getPackageName();
       // finish current activity.
       FeedbackEditActivity.this.finish();
+      
       // launch anno home activity.
       Intent intent = new Intent();
       intent.setClassName(packageName,
           "co.usersource.annoplugin.view.AnnoMainActivity");
       startActivity(intent);
     }
-  };
-
-  private View.OnTouchListener commentTouchListener = new View.OnTouchListener() {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.view.View.OnTouchListener#onTouch(android.view.View,
-     * android.view.MotionEvent)
-     */
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-      ViewUtils.displayError(FeedbackEditActivity.this, "comment touched.");
-      return false;
-    }
-
   };
 
   private View.OnClickListener sendCommentClickListener = new View.OnClickListener() {

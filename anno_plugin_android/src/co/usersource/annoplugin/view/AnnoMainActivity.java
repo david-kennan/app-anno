@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
@@ -60,6 +61,8 @@ public class AnnoMainActivity extends FragmentActivity implements
     getActionBar().setLogo(R.drawable.anno_ic_launcher);
 
     setComponent();
+
+    AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
   }
 
   private void setComponent() {

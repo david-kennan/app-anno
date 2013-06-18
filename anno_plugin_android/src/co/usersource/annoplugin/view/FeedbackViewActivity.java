@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.ImageManage;
@@ -44,6 +45,7 @@ public class FeedbackViewActivity extends Activity {
   private EditText tvComment;
   private ActionBar actionBar;
   private Button btnComment;
+  private Button btnGoHome;
 
   /**
    * token id represents retrieving comment in an async process.
@@ -61,6 +63,8 @@ public class FeedbackViewActivity extends Activity {
 
     setComponents();
     handleIntent();
+
+    AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
   }
 
   private void handleIntent() {
@@ -86,6 +90,8 @@ public class FeedbackViewActivity extends Activity {
     btnComment.setVisibility(View.INVISIBLE);
     actionBar = getActionBar();
     actionBar.hide();
+    btnGoHome = (Button) findViewById(R.id.btnGoHome);
+    btnGoHome.setVisibility(View.GONE);
   }
 
   private static class AsyncHandler extends AsyncQueryHandler {
