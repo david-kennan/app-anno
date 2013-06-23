@@ -14,8 +14,8 @@
         anno:arrow_left="110dp"
         anno:arrow_left_right_space="@dimen/comment_arrow_space"
         anno:arrow_on_top="true"
-        anno:circle_background_color="@color/circle_background"
-        anno:circle_border_color="@color/circle_border"
+        anno:circle_background_color="@color/transparent_orange"
+        anno:circle_border_color="@color/orange"
         anno:circle_left="110dp"
         anno:circle_radius="20dp" />
 
@@ -49,7 +49,9 @@
             anno:arrow_border_color="@color/commentbox_border"
             anno:arrow_left="100dp"
             anno:arrow_left_right_space="@dimen/comment_arrow_space"
-            anno:arrow_on_top="true" >
+            anno:arrow_on_top="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true" >
 
             <EditText
                 android:id="@+id/etComment"

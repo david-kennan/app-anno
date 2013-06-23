@@ -210,6 +210,10 @@ public class CommentAreaLayout extends RelativeLayout {
   }
 
   public void startMoving() {
+    hideHomeButton();
+  }
+
+  public void hideHomeButton() {
     InputMethodManager imm = (InputMethodManager) this.getContext()
         .getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(getCommentInput().getWindowToken(),

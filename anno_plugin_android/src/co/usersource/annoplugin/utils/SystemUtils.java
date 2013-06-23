@@ -8,6 +8,10 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.os.Environment;
 import android.os.StatFs;
@@ -78,10 +82,31 @@ public final class SystemUtils {
     }
   }
 
+  /**
+   * get screen resolution.
+   * 
+   * @param activity
+   * @return resolution array.
+   */
   public static int[] resolution(Activity activity) {
     DisplayMetrics displayMetrics = new DisplayMetrics();
     activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
     return new int[] { displayMetrics.widthPixels, displayMetrics.heightPixels };
+  }
+
+  public static String getAppName(Activity activity)
+      throws NameNotFoundException {
+    PackageManager pm = activity.getPackageManager();
+    ApplicationInfo appInfo = pm.getApplicationInfo(activity.getPackageName(),
+        0);
+    return pm.getApplicationLabel(appInfo).toString();
+  }
+
+  public static String getAppVersion(Activity activity)
+      throws NameNotFoundException {
+    PackageManager pm = activity.getPackageManager();
+    PackageInfo pi = pm.getPackageInfo(activity.getPackageName(), 0);
+    return pi.versionName;
   }
 
 }

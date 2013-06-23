@@ -3,7 +3,8 @@
     xmlns:anno="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context=".FeedbackEditActivity" >
 
     <android.gesture.GestureOverlayView
         android:id="@+id/gestures"
@@ -13,10 +14,10 @@
         android:gestureStrokeType="multiple" >
 
         <RelativeLayout
+            android:id="@+id/outer_bg"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/orange"
-            tools:context=".FeedbackEditActivity" >
+            android:background="@color/orange" >
 
             <RelativeLayout
                 android:id="@+id/imvScreenshot"

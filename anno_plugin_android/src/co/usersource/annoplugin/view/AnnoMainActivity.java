@@ -19,6 +19,7 @@ import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
+import co.usersource.annoplugin.utils.PluginUtils;
 
 /**
  * Home screen. Displays a list of all comments, by clicking any comment,
@@ -52,6 +53,8 @@ public class AnnoMainActivity extends FragmentActivity implements
   private SimpleCursorAdapter adapter;
   private ListView feedbackListView;
 
+  private int level;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -61,8 +64,14 @@ public class AnnoMainActivity extends FragmentActivity implements
     getActionBar().setLogo(R.drawable.anno_ic_launcher);
 
     setComponent();
+    handleIntent();
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+  }
+
+  private void handleIntent() {
+    Intent intent = getIntent();
+    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
   }
 
   private void setComponent() {
@@ -137,6 +146,15 @@ public class AnnoMainActivity extends FragmentActivity implements
     Intent intent = new Intent(this, FeedbackViewActivity.class);
     intent.putExtra(AnnoContentProvider.COMMENT_PATH,
         ContentUris.withAppendedId(AnnoContentProvider.COMMENT_PATH_URI, id));
+    intent.putExtra(PluginUtils.LEVEL, level);
     startActivity(intent);
   }
+
+  /**
+   * @return the level
+   */
+  public int getLevel() {
+    return level;
+  }
+
 }

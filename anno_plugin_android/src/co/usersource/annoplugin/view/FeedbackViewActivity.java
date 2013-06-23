@@ -22,6 +22,7 @@ import co.usersource.annoplugin.datastore.ImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.AppConfig;
+import co.usersource.annoplugin.utils.PluginUtils;
 import co.usersource.annoplugin.view.custom.CommentAreaLayout;
 
 /**
@@ -52,6 +53,8 @@ public class FeedbackViewActivity extends Activity {
    */
   private static final int TOKEN_GET_COMMENT = 1;
 
+  private int level;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -69,6 +72,7 @@ public class FeedbackViewActivity extends Activity {
 
   private void handleIntent() {
     Intent intent = getIntent();
+    level = intent.getIntExtra(PluginUtils.LEVEL, 0);
     String[] projection = { TableCommentFeedbackAdapter.COL_ID,
         TableCommentFeedbackAdapter.COL_COMMENT,
         TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY,
@@ -153,5 +157,13 @@ public class FeedbackViewActivity extends Activity {
         cursor.close();
       }
     }
+  }
+
+  /**
+   * @return the level
+   */
+  public int getLevel() {
+    return level;
   };
+
 }

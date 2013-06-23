@@ -22,8 +22,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import co.usersource.annoplugin.R;
+import co.usersource.annoplugin.utils.PluginUtils;
 import co.usersource.annoplugin.utils.ScreenshotUtils;
 import co.usersource.annoplugin.utils.ViewUtils;
+import co.usersource.annoplugin.view.AnnoMainActivity;
+import co.usersource.annoplugin.view.FeedbackEditActivity;
+import co.usersource.annoplugin.view.FeedbackViewActivity;
 
 /**
  * Screenshot gesture listener, detect and process spiral gesture.
@@ -57,6 +61,20 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
    */
   @Override
   public void onGesturePerformed(GestureOverlayView arg0, Gesture gesture) {
+    int level = 0;
+    if (activity instanceof FeedbackEditActivity) {
+      level = ((FeedbackEditActivity) activity).getLevel();
+    } else if (activity instanceof FeedbackViewActivity) {
+      level = ((FeedbackViewActivity) activity).getLevel();
+    } else if (activity instanceof AnnoMainActivity) {
+      level = ((AnnoMainActivity) activity).getLevel();
+    }
+
+    if (level >= 2) {
+      Log.d(TAG, "Already 2 levels, no recursive any more.");
+      return;
+    }
+
     ArrayList<Prediction> predictions = gestureLibrary.recognize(gesture);
     ArrayList<String> predictionNames = new ArrayList<String>();
     if (predictions != null) {
@@ -71,6 +89,9 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
         } catch (FileNotFoundException e) {
           Log.e(TAG, e.getMessage(), e);
           ViewUtils.displayError(activity, R.string.fail_take_screenshot);
+        } catch (IOException e) {
+          Log.e(TAG, e.getMessage());
+          ViewUtils.displayError(activity, R.string.fail_take_screenshot);
         }
       }
     }
@@ -78,16 +99,28 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
 
   private void launchAnnoPlugin(String screenshotPath) {
     String packageName = activity.getPackageName();
+
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setClassName(packageName, FEEDBACK_ACTIVITY);
     intent.setType("image/*");
     File imageFile = new File(screenshotPath);
     Uri imageUri = Uri.parse("file://" + imageFile.getPath());
     intent.putExtra(Intent.EXTRA_STREAM, imageUri);
+
+    if (activity instanceof FeedbackEditActivity
+        || activity instanceof FeedbackViewActivity
+        || activity instanceof AnnoMainActivity) {
+      // current app is standalone anno, or anno plugin activity.
+      intent.putExtra(PluginUtils.LEVEL, 1);
+    } else {
+      // current app is 3rd.
+      intent.putExtra(PluginUtils.LEVEL, 0);
+    }
+
     activity.startActivity(intent);
   }
 
-  private String takeScreenshot() throws FileNotFoundException {
+  private String takeScreenshot() throws IOException {
     Bitmap b = ScreenshotUtils.takeScreenshot(activity);
     FileOutputStream fos = null;
     try {
@@ -95,6 +128,12 @@ public class ScreenshotGestureListener implements OnGesturePerformedListener {
           Environment
               .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
           SCREENSHOTS_DIR_NAME);
+      if (!screenshotDir.exists()) {
+        if (!screenshotDir.mkdirs()) {
+          throw new IOException("Failed to create directory "
+              + screenshotDir.getAbsolutePath());
+        }
+      }
       File screenshotPath = new File(screenshotDir,
           ScreenshotUtils.generateScreenshotName());
       fos = new FileOutputStream(screenshotPath);

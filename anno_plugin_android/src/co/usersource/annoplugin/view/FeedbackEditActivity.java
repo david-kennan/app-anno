@@ -15,8 +15,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -28,7 +28,10 @@ import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.AppConfig;
 import co.usersource.annoplugin.utils.ImageUtils;
+import co.usersource.annoplugin.utils.PluginUtils;
+import co.usersource.annoplugin.utils.SystemUtils;
 import co.usersource.annoplugin.utils.ViewUtils;
+import co.usersource.annoplugin.view.custom.CircleArrow;
 import co.usersource.annoplugin.view.custom.CommentAreaLayout;
 
 /**
@@ -49,10 +52,18 @@ public class FeedbackEditActivity extends Activity {
   // view components.
   private CommentAreaLayout commentAreaLayout;
   private RelativeLayout imvScreenshot;
+  private RelativeLayout outerBackground;
   private ActionBar actionBar;
   private EditText etComment;
   private Button btnComment;
   private Button btnGoHome;
+  private CircleArrow circleArrow;
+
+  /*
+   * This is to control anno plugin recursive levels. For 3rd-party app, at most
+   * 2-levels are allowed; For standalone alone, at most 1-level is allowed.
+   */
+  private int level = 0;
 
   /**
    * token id represents inserting a comment in an async process.
@@ -70,7 +81,7 @@ public class FeedbackEditActivity extends Activity {
 
     setComponents();
     handleIntent();
-    
+
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
   }
 
@@ -93,12 +104,26 @@ public class FeedbackEditActivity extends Activity {
     btnGoHome = (Button) findViewById(R.id.btnGoHome);
     commentAreaLayout = (CommentAreaLayout) findViewById(R.id.commentArea);
     actionBar = getActionBar();
+    outerBackground = (RelativeLayout) findViewById(R.id.outer_bg);
+    circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);
+    etComment.setOnFocusChangeListener(commentBoxFocusListener);
 
     onComment();
   }
+
+  private View.OnFocusChangeListener commentBoxFocusListener = new OnFocusChangeListener() {
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+      if (hasFocus) {
+        commentAreaLayout.hideHomeButton();
+      }
+    }
+
+  };
 
   private View.OnClickListener goHomeClickListener = new View.OnClickListener() {
 
@@ -107,11 +132,12 @@ public class FeedbackEditActivity extends Activity {
       String packageName = FeedbackEditActivity.this.getPackageName();
       // finish current activity.
       FeedbackEditActivity.this.finish();
-      
+
       // launch anno home activity.
       Intent intent = new Intent();
       intent.setClassName(packageName,
           "co.usersource.annoplugin.view.AnnoMainActivity");
+      intent.putExtra(PluginUtils.LEVEL, level);
       startActivity(intent);
     }
   };
@@ -142,6 +168,12 @@ public class FeedbackEditActivity extends Activity {
         values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
         values.put(TableCommentFeedbackAdapter.COL_DIRECTION, circleOnTop ? 0
             : 1);
+        Log.d(TAG,
+            "app name:" + SystemUtils.getAppName(FeedbackEditActivity.this));
+        Log.d(
+            TAG,
+            "app version:"
+                + SystemUtils.getAppVersion(FeedbackEditActivity.this));
         handler.startInsert(TOKEN_INSERT_COMMENT, null,
             AnnoContentProvider.COMMENT_PATH_URI, values);
       } catch (IOException e) {
@@ -168,6 +200,17 @@ public class FeedbackEditActivity extends Activity {
   }
 
   private void handleFromShareImage(Intent intent) {
+    this.level = intent.getIntExtra(PluginUtils.LEVEL, 0) + 1;
+    Log.d(TAG, "current level:" + this.level);
+    if (this.level == 2) {
+      outerBackground.setBackgroundColor(getResources().getColor(R.color.red));
+      btnComment.setBackgroundResource(R.drawable.send_comment_button_l2);
+      btnGoHome.setBackgroundResource(R.drawable.send_comment_button_l2);
+      circleArrow.setCircleBackgroundColor(getResources().getColor(
+          R.color.transparent_red));
+      circleArrow.setCircleBorderColor(getResources().getColor(R.color.red));
+    }
+
     Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
     if (imageUri != null) {
       ContentResolver rc = this.getContentResolver();
@@ -209,6 +252,10 @@ public class FeedbackEditActivity extends Activity {
       }
     }
 
+  }
+
+  public int getLevel() {
+    return level;
   }
 
 }
