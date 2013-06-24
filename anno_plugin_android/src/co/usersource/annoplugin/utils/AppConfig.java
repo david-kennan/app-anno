@@ -32,6 +32,12 @@ public final class AppConfig {
     load(context, SETTING);
   }
 
+  /**
+   * TODO: add comments.
+   * 
+   * @param context
+   * @return
+   */
   public static AppConfig getInstance(Context context) {
     if (instance == null) {
       instance = new AppConfig(context);

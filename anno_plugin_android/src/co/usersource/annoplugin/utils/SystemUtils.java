@@ -94,6 +94,15 @@ public final class SystemUtils {
     return new int[] { displayMetrics.widthPixels, displayMetrics.heightPixels };
   }
 
+  /**
+   * Get application name.
+   * 
+   * @param activity
+   *          current activity.
+   * @return application name. This equals to the app title that appears in
+   *         settings->application.
+   * @throws NameNotFoundException
+   */
   public static String getAppName(Activity activity)
       throws NameNotFoundException {
     PackageManager pm = activity.getPackageManager();
@@ -102,11 +111,39 @@ public final class SystemUtils {
     return pm.getApplicationLabel(appInfo).toString();
   }
 
+  /**
+   * Get application version.
+   * 
+   * @param activity
+   *          current activity.
+   * @return application version. This equals to the version that appears in
+   *         settings->application.
+   * @throws NameNotFoundException
+   */
   public static String getAppVersion(Activity activity)
       throws NameNotFoundException {
     PackageManager pm = activity.getPackageManager();
     PackageInfo pi = pm.getPackageInfo(activity.getPackageName(), 0);
     return pi.versionName;
+  }
+
+  /**
+   * Get phone/tablet model. For example, I use Nexus 7, it should return 'Nexus
+   * 7'.
+   * 
+   * @return phone/tablet model.
+   */
+  public static String getModel() {
+    return android.os.Build.MODEL;
+  }
+
+  /**
+   * Get android os version.
+   * 
+   * @return android os version.
+   */
+  public static String getOSVersion() {
+    return android.os.Build.VERSION.RELEASE;
   }
 
 }

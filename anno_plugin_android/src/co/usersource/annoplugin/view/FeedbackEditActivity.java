@@ -168,12 +168,13 @@ public class FeedbackEditActivity extends Activity {
         values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
         values.put(TableCommentFeedbackAdapter.COL_DIRECTION, circleOnTop ? 0
             : 1);
+        values.put(TableCommentFeedbackAdapter.COL_APP_VERSION,
+            SystemUtils.getAppVersion(FeedbackEditActivity.this));
+        values.put(TableCommentFeedbackAdapter.COL_OS_VERSION,
+            SystemUtils.getOSVersion());
         Log.d(TAG,
             "app name:" + SystemUtils.getAppName(FeedbackEditActivity.this));
-        Log.d(
-            TAG,
-            "app version:"
-                + SystemUtils.getAppVersion(FeedbackEditActivity.this));
+        Log.d(TAG, "model:" + SystemUtils.getModel());
         handler.startInsert(TOKEN_INSERT_COMMENT, null,
             AnnoContentProvider.COMMENT_PATH_URI, values);
       } catch (IOException e) {

@@ -4,6 +4,8 @@
 package co.usersource.annoplugin.utils;
 
 /**
+ * Utilities related to the plugin.
+ * 
  * @author topcircler
  * 
  */
@@ -17,6 +19,13 @@ public class PluginUtils {
    */
   private static final String ANNO_PACKAGE_NAME = "co.usersource.anno";
 
+  /**
+   * Check if current app is standalone anno.
+   * 
+   * @param packageName
+   *          current app package name.
+   * @return if current app is standalone anno.
+   */
   public static boolean isAnno(String packageName) {
     return ANNO_PACKAGE_NAME.equals(packageName);
   }
