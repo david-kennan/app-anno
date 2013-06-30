@@ -2,6 +2,7 @@ package co.usersource.annoplugin.view;
 
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +21,7 @@ import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.PluginUtils;
+import co.usersource.annoplugin.utils.SystemUtils;
 
 /**
  * Home screen. Displays a list of all comments, by clicking any comment,
@@ -60,9 +62,6 @@ public class AnnoMainActivity extends FragmentActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.anno_home);
 
-    getActionBar().setTitle(R.string.plugin_name);
-    getActionBar().setLogo(R.drawable.anno_ic_launcher);
-
     setComponent();
     handleIntent();
 
@@ -82,6 +81,24 @@ public class AnnoMainActivity extends FragmentActivity implements
         R.layout.comment_row, null, bindFrom, bindTo, 0);
     feedbackListView.setAdapter(adapter);
     feedbackListView.setOnItemClickListener(this);
+
+    getActionBar().setLogo(R.drawable.anno_ic_launcher);
+    if (PluginUtils.isAnno(this.getPackageName())) {
+      getActionBar().setTitle(R.string.plugin_name);
+    } else {
+      String appName;
+      try {
+        appName = SystemUtils.getAppName(this);
+        String appVersion = SystemUtils.getAppVersion(this);
+        String pluginName = this.getResources().getString(R.string.plugin_name);
+        String title = pluginName + " About " + appName + " " + appVersion;
+        getActionBar().setTitle(title);
+      } catch (NameNotFoundException e) {
+        Log.e(TAG, "Failed to get app name or version.");
+        Log.e(TAG, e.getMessage(), e);
+        getActionBar().setTitle(R.string.plugin_name);
+      }
+    }
   }
 
   /**

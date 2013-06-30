@@ -112,6 +112,10 @@ public class FeedbackEditActivity extends Activity {
     etComment.setOnFocusChangeListener(commentBoxFocusListener);
 
     onComment();
+
+    if (PluginUtils.isAnno(getPackageName())) {
+      btnGoHome.setVisibility(View.GONE);
+    }
   }
 
   private View.OnFocusChangeListener commentBoxFocusListener = new OnFocusChangeListener() {
