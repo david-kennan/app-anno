@@ -106,6 +106,7 @@ public class FeedbackEditActivity extends Activity {
     actionBar = getActionBar();
     outerBackground = (RelativeLayout) findViewById(R.id.outer_bg);
     circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
+    circleArrow.setActivity(this);
 
     btnComment.setOnClickListener(sendCommentClickListener);
     btnGoHome.setOnClickListener(goHomeClickListener);

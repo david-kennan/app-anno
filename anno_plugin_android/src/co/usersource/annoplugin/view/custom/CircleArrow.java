@@ -12,8 +12,10 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.utils.ViewUtils;
+import co.usersource.annoplugin.view.FeedbackEditActivity;
 
 /**
  * 
@@ -47,6 +49,9 @@ public class CircleArrow extends View implements View.OnTouchListener {
 
   private boolean flag = false;
   private boolean isMovable = true;
+
+  // bad design to store activity here.
+  private FeedbackEditActivity activity;
 
   /**
    * @param context
@@ -84,6 +89,10 @@ public class CircleArrow extends View implements View.OnTouchListener {
     this.setOnTouchListener(this);
 
     a.recycle();
+  }
+
+  public void setActivity(FeedbackEditActivity activity) {
+    this.activity = activity;
   }
 
   public void setMovable(boolean isMovable) {
@@ -291,6 +300,7 @@ public class CircleArrow extends View implements View.OnTouchListener {
     switch (event.getAction() & MotionEvent.ACTION_MASK) {
     case MotionEvent.ACTION_DOWN:
       if (isMovable) {
+        AnnoPlugin.setEnableGesture(activity, R.id.gestures, false);
         if (x >= circleLeft && x <= circleLeft + circleRadius * 2 && !flag) {
           flag = true;
           CommentAreaLayout layout = (CommentAreaLayout) this.getParent();
@@ -306,6 +316,7 @@ public class CircleArrow extends View implements View.OnTouchListener {
       break;
     case MotionEvent.ACTION_UP:
       flag = false;
+      AnnoPlugin.setEnableGesture(activity, R.id.gestures, true);
       break;
     }
     return true;

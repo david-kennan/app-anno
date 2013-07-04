@@ -47,7 +47,7 @@ public class EditTextLayout extends RelativeLayout {
     arrowBorderColor = a.getColor(R.styleable.CommentArea_arrow_border_color,
         R.color.commentbox_border);
 
-    this.setWillNotDraw(false);
+    // this.setWillNotDraw(false);
 
     paint = new Paint();
     path = new Path();

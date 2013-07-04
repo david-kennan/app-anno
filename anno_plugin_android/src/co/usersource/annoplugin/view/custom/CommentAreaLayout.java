@@ -29,6 +29,7 @@ public class CommentAreaLayout extends RelativeLayout {
   private float boundary;
   private static final float DEFAULT_BOUNDARY = 10;
   private boolean circleOnTop = true;
+  private Context context;
 
   /**
    * @param context
@@ -36,6 +37,7 @@ public class CommentAreaLayout extends RelativeLayout {
    */
   public CommentAreaLayout(Context context, AttributeSet attrs) {
     super(context, attrs);
+    this.context = context;
 
     LayoutInflater.from(context).inflate(R.layout.comment_area_layout, this,
         true);
@@ -102,11 +104,14 @@ public class CommentAreaLayout extends RelativeLayout {
   private void setVerticalPosition(int y, RelativeLayout parent) {
     if (y + circle.getCircleRadius() < parent.getHeight()) {
       RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-          this.getWidth(), this.getHeight());
+          LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
       if (circleOnTop) {
         lp.setMargins(0, y, 0, 0);
       } else {
-        lp.setMargins(0, y - getHeight() + (int) circle.getCircleRadius(), 0, 0);
+        lp.setMargins(
+            0,
+            y - (int) commentActionBar.getHeight()
+                - (int) circle.getCircleRadius(), 0, 0);
       }
       this.setLayoutParams(lp);
     }
@@ -144,9 +149,9 @@ public class CommentAreaLayout extends RelativeLayout {
         R.dimen.comment_area_marginLeftRight);
     abLp.setMargins(margin, 0, margin, 0);
     if (direction) { // top to bottom
-      circleLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-      circleLp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-      abLp.addRule(RelativeLayout.ABOVE, R.id.circleArrow);
+      abLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+      abLp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+      circleLp.addRule(RelativeLayout.BELOW, R.id.commentActionBar);
     } else { // bottom to top.
       circleLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
       circleLp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
