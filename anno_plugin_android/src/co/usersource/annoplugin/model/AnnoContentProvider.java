@@ -22,8 +22,7 @@ import co.usersource.annoplugin.datastore.UnknownUriException;
  */
 public class AnnoContentProvider extends ContentProvider {
 
-  public static final String AUTHORITY = "co.usersource.doui.annoplugin.provider";
-  // public static final String AUTHORITY = "co.usersource.anno.provider";
+  public static final String AUTHORITY = "co.usersource.anno.provider";
   public static final String COMMENT_PATH = TableCommentFeedbackAdapter.TABLE_NAME;
   public static final Uri COMMENT_PATH_URI = Uri.parse("content://" + AUTHORITY
       + "/" + COMMENT_PATH);
@@ -36,9 +35,7 @@ public class AnnoContentProvider extends ContentProvider {
   private static final String TABLE_MIME_TYPE = "vnd";
   private static final String TABLE_MIME_SUBTYPE_FOR_ROW = "android.cursor.item/";
   private static final String TABLE_MIME_SUBTYPE_FOR_ROWS = "android.cursor.dir/";
-  private static final String TABLE_NAME_PROVIDER_SPECIFIC = "co.usersource.doui.annoplugin.provider";
-  // private static final String TABLE_NAME_PROVIDER_SPECIFIC =
-  // "co.usersource.anno.provider";
+  private static final String TABLE_NAME_PROVIDER_SPECIFIC = "co.usersource.anno.provider";
 
   private AnnoSQLiteOpenHelper annoSQLiteOpenHelper;
   private static final UriMatcher URI_MATCHER = new UriMatcher(
@@ -122,8 +119,10 @@ public class AnnoContentProvider extends ContentProvider {
     int code = URI_MATCHER.match(uri);
     switch (code) {
     case SINGLE_COMMENT_CODE:
+    	String[] args = {uri.getLastPathSegment()};
+    	String selectionExpr = TableCommentFeedbackAdapter.COL_ID + " = ?";
       return annoSQLiteOpenHelper.getTableCommentFeedbackAdapter().update(
-          values, selection, selectionArgs);
+          values, selectionExpr, args);
     default:
       handleUnknownUri(uri, code);
     }
