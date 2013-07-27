@@ -23,7 +23,7 @@ import co.usersource.annoplugin.datastore.UnknownUriException;
 public class AnnoContentProvider extends ContentProvider {
 
   public static final String AUTHORITY = "co.usersource.doui.annoplugin.provider";
-  // public static final String AUTHORITY = "co.usersource.anno.provider";
+  //public static final String AUTHORITY = "co.usersource.anno.provider";
   public static final String COMMENT_PATH = TableCommentFeedbackAdapter.TABLE_NAME;
   public static final Uri COMMENT_PATH_URI = Uri.parse("content://" + AUTHORITY
       + "/" + COMMENT_PATH);

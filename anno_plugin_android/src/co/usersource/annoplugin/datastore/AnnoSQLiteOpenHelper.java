@@ -21,7 +21,7 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
 
   public static final String DATABASE_NAME = "anno.db";
   /** Version for upgrade routines. */
-  public static final int DATABASE_VERSION = 4;
+  public static final int DATABASE_VERSION = 6;
 
   /* table adapters */
   private TableAdapter tableCommentFeedbackAdapter;
@@ -85,6 +85,26 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
           TableCommentFeedbackAdapter.COL_OS_VERSION, "4.2.2");
       database.execSQL(sql);
       Log.d(TAG, "upgrade db:" + sql);
+    } else if (oldVersion == 4 && newVersion == 5) {
+      String sql = String.format(addColumnSql,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_MOVED, "integer");
+      database.execSQL(sql);
+      Log.d(TAG, "upgrade db:" + sql);
+      sql = String.format(updateOneValue,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_MOVED, 1);
+      database.execSQL(sql);
+    } else if (oldVersion == 5 && newVersion == 6) {
+      String sql = String.format(addColumnSql,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_LEVEL, "integer");
+      database.execSQL(sql);
+      Log.d(TAG, "upgrade db:" + sql);
+      sql = String.format(updateOneValue,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_LEVEL, 1);
+      database.execSQL(sql);
     }
   }
 

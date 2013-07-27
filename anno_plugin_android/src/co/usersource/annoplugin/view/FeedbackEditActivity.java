@@ -166,6 +166,9 @@ public class FeedbackEditActivity extends Activity {
         float x = commentAreaLayout.getCircleX();
         boolean circleOnTop = commentAreaLayout.circleOnTop();
 
+        boolean isMoved = circleArrow.isMoved();
+        int level = getLevel();
+
         ContentValues values = new ContentValues();
         values.put(TableCommentFeedbackAdapter.COL_COMMENT, comment);
         values.put(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY, imageKey);
@@ -173,6 +176,8 @@ public class FeedbackEditActivity extends Activity {
         values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
         values.put(TableCommentFeedbackAdapter.COL_DIRECTION, circleOnTop ? 0
             : 1);
+        values.put(TableCommentFeedbackAdapter.COL_MOVED, isMoved ? 1 : 0);
+        values.put(TableCommentFeedbackAdapter.COL_LEVEL, level);
         values.put(TableCommentFeedbackAdapter.COL_APP_VERSION,
             SystemUtils.getAppVersion(FeedbackEditActivity.this));
         values.put(TableCommentFeedbackAdapter.COL_OS_VERSION,
@@ -230,7 +235,7 @@ public class FeedbackEditActivity extends Activity {
       }
     }
   }
-
+  
   /**
    * Async handler for query manipulation.
    * 

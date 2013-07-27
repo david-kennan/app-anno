@@ -29,6 +29,8 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   public static final String COL_DIRECTION = "direction";
   public static final String COL_APP_VERSION = "app_version";
   public static final String COL_OS_VERSION = "os_version";
+  public static final String COL_MOVED = "isMoved"; // 0 - not move, 1 - moved.
+  public static final String COL_LEVEL = "level"; // 1 or 2.
 
   public static final String TABLE_NAME = "feedback_comment";
 
@@ -45,10 +47,10 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   public List<String> getInitSqls() {
     String createTableSql = String
         .format(
-            "create table %s (%s integer primary key autoincrement, %s text not null, %s text not null, %s integer not null, %s integer not null, %s integer not null, %s text, %s text);",
+            "create table %s (%s integer primary key autoincrement, %s text not null, %s text not null, %s integer not null, %s integer not null, %s integer not null, %s text, %s text, %s integer not null, %s integer not null);",
             TABLE_NAME, COL_ID, COL_COMMENT, COL_SCREENSHOT_KEY,
             COL_POSITION_X, COL_POSITION_Y, COL_DIRECTION, COL_APP_VERSION,
-            COL_OS_VERSION);
+            COL_OS_VERSION, COL_MOVED, COL_LEVEL);
 
     List<String> initSqls = new ArrayList<String>();
     initSqls.add(createTableSql);

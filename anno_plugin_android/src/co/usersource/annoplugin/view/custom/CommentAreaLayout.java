@@ -106,12 +106,15 @@ public class CommentAreaLayout extends RelativeLayout {
       RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
           LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
       if (circleOnTop) {
+        lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         lp.setMargins(0, y, 0, 0);
       } else {
-        lp.setMargins(
-            0,
-            y - (int) commentActionBar.getHeight()
-                - (int) circle.getCircleRadius(), 0, 0);
+        /*
+         * lp.setMargins( 0, y - (int) commentActionBar.getHeight() - (int)
+         * circle.getCircleRadius(), 0, 0);
+         */
+        lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lp.setMargins(0, 0, 0, parent.getHeight() - y);
       }
       this.setLayoutParams(lp);
     }
@@ -152,6 +155,7 @@ public class CommentAreaLayout extends RelativeLayout {
       abLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
       abLp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
       circleLp.addRule(RelativeLayout.BELOW, R.id.commentActionBar);
+      // abLp.addRule(RelativeLayout.ABOVE, R.id.circleArrow);
     } else { // bottom to top.
       circleLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
       circleLp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);

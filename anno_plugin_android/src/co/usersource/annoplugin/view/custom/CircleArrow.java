@@ -49,6 +49,8 @@ public class CircleArrow extends View implements View.OnTouchListener {
 
   private boolean flag = false;
   private boolean isMovable = true;
+  private boolean isMoved = false;
+  private boolean circleDisplayed = true;
 
   // bad design to store activity here.
   private FeedbackEditActivity activity;
@@ -112,10 +114,12 @@ public class CircleArrow extends View implements View.OnTouchListener {
 
     int height = this.getHeight();
 
-    if (arrowOnTop) {
-      drawCircleTop(canvas);
-    } else {
-      drawCircleBottom(canvas, height);
+    if (circleDisplayed) {
+      if (arrowOnTop) {
+        drawCircleTop(canvas);
+      } else {
+        drawCircleBottom(canvas, height);
+      }
     }
     if (circleLeft + circleRadius >= arrowLeft + arrowLeftRightSpace / 2) {
       borderWidth = similarLine(
@@ -310,6 +314,7 @@ public class CircleArrow extends View implements View.OnTouchListener {
       break;
     case MotionEvent.ACTION_MOVE:
       if (flag) {
+        isMoved = true;
         CommentAreaLayout layout = (CommentAreaLayout) this.getParent();
         layout.move(x, y);
       }
@@ -415,4 +420,19 @@ public class CircleArrow extends View implements View.OnTouchListener {
   private float similarLine(float x1, float x2, float y2) {
     return x1 * y2 / x2;
   }
+
+  /**
+   * @return the isMoved
+   */
+  public boolean isMoved() {
+    return isMoved;
+  }
+
+  public void setCircleDisplayed(boolean display) {
+    if (this.circleDisplayed != display) {
+      this.circleDisplayed = display;
+      this.invalidate();
+    }
+  }
+
 }

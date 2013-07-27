@@ -23,6 +23,7 @@ import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.AppConfig;
 import co.usersource.annoplugin.utils.PluginUtils;
+import co.usersource.annoplugin.view.custom.CircleArrow;
 import co.usersource.annoplugin.view.custom.CommentAreaLayout;
 
 /**
@@ -47,6 +48,8 @@ public class FeedbackViewActivity extends Activity {
   private ActionBar actionBar;
   private Button btnComment;
   private Button btnGoHome;
+  private CircleArrow circleArrow;
+  private RelativeLayout outerBackground;
 
   /**
    * token id represents retrieving comment in an async process.
@@ -78,7 +81,9 @@ public class FeedbackViewActivity extends Activity {
         TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY,
         TableCommentFeedbackAdapter.COL_POSITION_X,
         TableCommentFeedbackAdapter.COL_POSITION_Y,
-        TableCommentFeedbackAdapter.COL_DIRECTION };
+        TableCommentFeedbackAdapter.COL_DIRECTION,
+        TableCommentFeedbackAdapter.COL_MOVED,
+        TableCommentFeedbackAdapter.COL_LEVEL };
     Uri uri = intent.getParcelableExtra(AnnoContentProvider.COMMENT_PATH);
     handler.startQuery(TOKEN_GET_COMMENT, null, uri, projection, null, null,
         null);
@@ -88,6 +93,7 @@ public class FeedbackViewActivity extends Activity {
     viewImvScreenshot = (RelativeLayout) findViewById(R.id.viewImvScreenshot);
     tvComment = (EditText) findViewById(R.id.etComment);
     tvComment.setEnabled(false);
+    outerBackground = (RelativeLayout) findViewById(R.id.outer_bg);
     viewCommentArea = (CommentAreaLayout) findViewById(R.id.viewCommentArea);
     viewCommentArea.setChangable(false);
     btnComment = (Button) findViewById(R.id.btnComment);
@@ -96,6 +102,7 @@ public class FeedbackViewActivity extends Activity {
     actionBar.hide();
     btnGoHome = (Button) findViewById(R.id.btnGoHome);
     btnGoHome.setVisibility(View.GONE);
+    circleArrow = (CircleArrow) findViewById(R.id.circleArrow);
   }
 
   private static class AsyncHandler extends AsyncQueryHandler {
@@ -115,46 +122,88 @@ public class FeedbackViewActivity extends Activity {
       if (token == TOKEN_GET_COMMENT) {
         if (cursor != null && cursor.moveToFirst()) {
 
-          int idx = cursor
-              .getColumnIndex(TableCommentFeedbackAdapter.COL_COMMENT);
-          if (idx != -1) {
-            String comment = cursor.getString(idx);
-            activity.tvComment.setText(comment);
-          }
-          idx = cursor
-              .getColumnIndex(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY);
-          if (idx != -1) {
-            String imageKey = cursor.getString(idx);
-            BitmapDrawable drawable = new BitmapDrawable(
-                activity.imageManage.loadImage(imageKey));
-            activity.viewImvScreenshot.setBackgroundDrawable(drawable);
-          }
-          final int x, y, direction;
-          int xIdx = cursor
-              .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_X);
-          int yIdx = cursor
-              .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y);
-          int directionIdx = cursor
-              .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION);
-          if (xIdx != -1 && yIdx != -1 && directionIdx != -1) {
-            x = cursor.getInt(xIdx);
-            y = cursor.getInt(yIdx);
-            direction = cursor.getInt(directionIdx);
-            final FeedbackViewActivity finalActivity = activity;
-            activity.viewCommentArea.post(new Runnable() {
-
-              @Override
-              public void run() {
-                finalActivity.viewCommentArea.locate(x, y, direction);
-              }
-
-            });
-          }
+          initComment(cursor, activity);
+          initImage(cursor, activity);
+          initPosition(cursor, activity);
+          initCircle(cursor, activity);
+          initStyle(cursor, activity);
         }
       }
       activity = null;
       if (!cursor.isClosed()) {
         cursor.close();
+      }
+    }
+
+    private void initStyle(Cursor cursor, FeedbackViewActivity activity) {
+      int idx = cursor.getColumnIndex(TableCommentFeedbackAdapter.COL_LEVEL);
+      if (idx != -1) {
+        int level = cursor.getInt(idx);
+        if (level == 2) {
+          activity.outerBackground.setBackgroundColor(activity.getResources()
+              .getColor(R.color.red));
+          activity.circleArrow.setCircleBackgroundColor(activity.getResources()
+              .getColor(R.color.transparent_red));
+          activity.circleArrow.setCircleBorderColor(activity.getResources()
+              .getColor(R.color.red));
+        }
+      }
+    }
+
+    private void initCircle(Cursor cursor, final FeedbackViewActivity activity) {
+      int idx;
+      idx = cursor.getColumnIndex(TableCommentFeedbackAdapter.COL_MOVED);
+      if (idx != -1) {
+        int isMoved = cursor.getInt(idx);
+        if (isMoved == 0) {
+          activity.circleArrow.setCircleDisplayed(false);
+        } else {
+          activity.circleArrow.setCircleDisplayed(true);
+        }
+      }
+    }
+
+    private void initPosition(Cursor cursor, FeedbackViewActivity activity) {
+      final int x, y, direction;
+      int xIdx = cursor
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_X);
+      int yIdx = cursor
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y);
+      int directionIdx = cursor
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION);
+      if (xIdx != -1 && yIdx != -1 && directionIdx != -1) {
+        x = cursor.getInt(xIdx);
+        y = cursor.getInt(yIdx);
+        direction = cursor.getInt(directionIdx);
+        final FeedbackViewActivity finalActivity = activity;
+        activity.viewCommentArea.post(new Runnable() {
+
+          @Override
+          public void run() {
+            finalActivity.viewCommentArea.locate(x, y, direction);
+          }
+
+        });
+      }
+    }
+
+    private void initImage(Cursor cursor, FeedbackViewActivity activity) {
+      int idx;
+      idx = cursor
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY);
+      if (idx != -1) {
+        String imageKey = cursor.getString(idx);
+        BitmapDrawable drawable = new BitmapDrawable(
+            activity.imageManage.loadImage(imageKey));
+        activity.viewImvScreenshot.setBackgroundDrawable(drawable);
+      }
+    }
+
+    private void initComment(Cursor cursor, FeedbackViewActivity activity) {
+      int idx = cursor.getColumnIndex(TableCommentFeedbackAdapter.COL_COMMENT);
+      if (idx != -1) {
+        String comment = cursor.getString(idx);
+        activity.tvComment.setText(comment);
       }
     }
   }
