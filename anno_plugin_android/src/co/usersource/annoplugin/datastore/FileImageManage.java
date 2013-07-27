@@ -52,6 +52,24 @@ public class FileImageManage implements ImageManage {
   }
 
   /**
+   * Save the image to the disk with specified key
+   * @param bitmap image for saving
+   * @param key for saving bitmap
+   * @throws IOException
+   */
+  public void saveImageWithKey(Bitmap bitmap, String key) throws IOException {
+    String appLocation = config.getDataLocation();
+    String screenshotDirName = config.getScreenshotDirName();
+    String screenshotDirPath = new File(appLocation, screenshotDirName).getAbsolutePath();
+    SystemUtils.mkdirs(context, screenshotDirPath);
+    checkEnoughSpace(bitmap.getByteCount());
+
+    FileOutputStream out = new FileOutputStream(new File(screenshotDirPath,  key));
+    bitmap.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, out);
+  }
+
+  
+  /**
    * Check if there is enough space on SD card.
    * 
    * @param size

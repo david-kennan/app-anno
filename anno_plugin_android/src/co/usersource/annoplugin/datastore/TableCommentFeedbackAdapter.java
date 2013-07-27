@@ -31,6 +31,8 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   public static final String COL_OS_VERSION = "os_version";
   public static final String COL_MOVED = "isMoved"; // 0 - not move, 1 - moved.
   public static final String COL_LEVEL = "level"; // 1 or 2.
+  public static final String COL_TIMESTAMP = "last_update";
+  public static final String COL_OBJECT_KEY = "object_key";
 
   public static final String TABLE_NAME = "feedback_comment";
 
@@ -45,12 +47,15 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
 
   @Override
   public List<String> getInitSqls() {
-    String createTableSql = String
-        .format(
-            "create table %s (%s integer primary key autoincrement, %s text not null, %s text not null, %s integer not null, %s integer not null, %s integer not null, %s text, %s text, %s integer not null, %s integer not null);",
-            TABLE_NAME, COL_ID, COL_COMMENT, COL_SCREENSHOT_KEY,
-            COL_POSITION_X, COL_POSITION_Y, COL_DIRECTION, COL_APP_VERSION,
-            COL_OS_VERSION, COL_MOVED, COL_LEVEL);
+    String createTableSql = String.format("create table %s "
+        + "(%s integer primary key autoincrement, " + "%s text not null, "
+        + "%s text not null, " + "%s integer not null, "
+        + "%s integer not null, " + "%s integer not null, " + "%s text, "
+        + "%s text," + "%s timestamp not null default current_timestamp, "
+        + "%s text, " + "%s integer not null, " + "%s integer not null);",
+        TABLE_NAME, COL_ID, COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X,
+        COL_POSITION_Y, COL_DIRECTION, COL_APP_VERSION, COL_OS_VERSION,
+        COL_TIMESTAMP, COL_OBJECT_KEY, COL_MOVED, COL_LEVEL);
 
     List<String> initSqls = new ArrayList<String>();
     initSqls.add(createTableSql);
@@ -72,9 +77,8 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   @Override
   public int update(ContentValues values, String selection,
       String[] selectionArgs) {
-
-    throw new UnsupportedOperationException(
-        "TableCommentFeedbackAdapter.update Not Implemented.");
+    SQLiteDatabase database = this.sqliteOpenHelper.getWritableDatabase();
+    return database.update(getTableName(), values, selection, selectionArgs);
   }
 
   @Override
