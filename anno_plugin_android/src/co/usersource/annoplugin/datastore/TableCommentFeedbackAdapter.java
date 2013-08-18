@@ -27,15 +27,18 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   public static final String COL_POSITION_X = "x";
   public static final String COL_POSITION_Y = "y";
   public static final String COL_DIRECTION = "direction";
+  public static final String COL_APP_NAME = "app_name";
+  public static final String COL_MODEL = "model";
   public static final String COL_APP_VERSION = "app_version";
   public static final String COL_OS_VERSION = "os_version";
-  public static final String COL_MOVED = "isMoved"; // 0 - not move, 1 - moved.
+  public static final String COL_MOVED = "is_moved"; // 0 - not move, 1 - moved.
   public static final String COL_LEVEL = "level"; // 1 or 2.
+  // col_timestamp & col_object_key is used for synchronization
   public static final String COL_TIMESTAMP = "last_update";
   public static final String COL_OBJECT_KEY = "object_key";
 
   public static final String TABLE_NAME = "feedback_comment";
-
+  
   public TableCommentFeedbackAdapter(SQLiteOpenHelper sqliteOpenHelper) {
     super(sqliteOpenHelper);
   }
@@ -52,10 +55,11 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
         + "%s text not null, " + "%s integer not null, "
         + "%s integer not null, " + "%s integer not null, " + "%s text, "
         + "%s text," + "%s timestamp not null default current_timestamp, "
-        + "%s text, " + "%s integer not null, " + "%s integer not null);",
-        TABLE_NAME, COL_ID, COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X,
-        COL_POSITION_Y, COL_DIRECTION, COL_APP_VERSION, COL_OS_VERSION,
-        COL_TIMESTAMP, COL_OBJECT_KEY, COL_MOVED, COL_LEVEL);
+        + "%s text, " + "%s integer not null, "
+        + "%s integer not null, %s text, %s text);", TABLE_NAME, COL_ID,
+        COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X, COL_POSITION_Y,
+        COL_DIRECTION, COL_APP_VERSION, COL_OS_VERSION, COL_TIMESTAMP,
+        COL_OBJECT_KEY, COL_MOVED, COL_LEVEL, COL_APP_NAME, COL_MODEL);
 
     List<String> initSqls = new ArrayList<String>();
     initSqls.add(createTableSql);

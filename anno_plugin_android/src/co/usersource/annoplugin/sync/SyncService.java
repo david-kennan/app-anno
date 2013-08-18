@@ -1,4 +1,4 @@
-package co.usersource.anno.sync;
+package co.usersource.annoplugin.sync;
 
 import android.app.Service;
 import android.content.Intent;

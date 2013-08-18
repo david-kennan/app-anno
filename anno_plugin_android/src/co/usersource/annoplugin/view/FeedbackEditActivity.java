@@ -10,6 +10,7 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.ImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
+import co.usersource.annoplugin.sync.SyncAdapter;
 import co.usersource.annoplugin.utils.AppConfig;
 import co.usersource.annoplugin.utils.ImageUtils;
 import co.usersource.annoplugin.utils.PluginUtils;
@@ -152,41 +154,30 @@ public class FeedbackEditActivity extends Activity {
     @Override
     public void onClick(View v) {
       try {
+        // comment
         String comment = etComment.getText().toString();
         if (comment == null || comment.trim().isEmpty()) {
           ViewUtils.displayError(FeedbackEditActivity.this,
               R.string.invalid_comment_empty);
           return;
         }
+        // image
         Bitmap bitmap = ImageUtils.compressBitmap(ImageUtils
             .getBitmapFromImageView(imvScreenshot));
         String imageKey;
         imageKey = imageManage.saveImage(bitmap);
+        // coordinate
         float y = commentAreaLayout.getY();
         float x = commentAreaLayout.getCircleX();
+        // direction
         boolean circleOnTop = commentAreaLayout.circleOnTop();
-
+        // is moved
         boolean isMoved = circleArrow.isMoved();
+        // level
         int level = getLevel();
 
-        ContentValues values = new ContentValues();
-        values.put(TableCommentFeedbackAdapter.COL_COMMENT, comment);
-        values.put(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY, imageKey);
-        values.put(TableCommentFeedbackAdapter.COL_POSITION_X, x);
-        values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
-        values.put(TableCommentFeedbackAdapter.COL_DIRECTION, circleOnTop ? 0
-            : 1);
-        values.put(TableCommentFeedbackAdapter.COL_MOVED, isMoved ? 1 : 0);
-        values.put(TableCommentFeedbackAdapter.COL_LEVEL, level);
-        values.put(TableCommentFeedbackAdapter.COL_APP_VERSION,
-            SystemUtils.getAppVersion(FeedbackEditActivity.this));
-        values.put(TableCommentFeedbackAdapter.COL_OS_VERSION,
-            SystemUtils.getOSVersion());
-        Log.d(TAG,
-            "app name:" + SystemUtils.getAppName(FeedbackEditActivity.this));
-        Log.d(TAG, "model:" + SystemUtils.getModel());
-        handler.startInsert(TOKEN_INSERT_COMMENT, null,
-            AnnoContentProvider.COMMENT_PATH_URI, values);
+        storeCommentInLocalDB(comment, imageKey, y, x, circleOnTop, isMoved,
+            level);
       } catch (IOException e) {
         Log.e(TAG, e.getMessage());
         ViewUtils.displayError(FeedbackEditActivity.this, e.getMessage());
@@ -235,7 +226,7 @@ public class FeedbackEditActivity extends Activity {
       }
     }
   }
-  
+
   /**
    * Async handler for query manipulation.
    * 
@@ -260,6 +251,9 @@ public class FeedbackEditActivity extends Activity {
             "insert comment successfully. inserted uri:" + uri.toString());
         ViewUtils.displayInfo(activityRef.get(), R.string.success_send_comment);
         activityRef.get().finish();
+
+        // if insert comment successfully, send it to GAE server asynchronizely.
+        SyncAdapter.requestSync(activityRef.get().getApplicationContext());
       }
     }
 
@@ -267,6 +261,28 @@ public class FeedbackEditActivity extends Activity {
 
   public int getLevel() {
     return level;
+  }
+
+  private void storeCommentInLocalDB(String comment, String imageKey, float y,
+      float x, boolean circleOnTop, boolean isMoved, int level)
+      throws NameNotFoundException {
+    ContentValues values = new ContentValues();
+    values.put(TableCommentFeedbackAdapter.COL_COMMENT, comment);
+    values.put(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY, imageKey);
+    values.put(TableCommentFeedbackAdapter.COL_POSITION_X, x);
+    values.put(TableCommentFeedbackAdapter.COL_POSITION_Y, y);
+    values.put(TableCommentFeedbackAdapter.COL_DIRECTION, circleOnTop ? 0 : 1);
+    values.put(TableCommentFeedbackAdapter.COL_MOVED, isMoved ? 1 : 0);
+    values.put(TableCommentFeedbackAdapter.COL_LEVEL, level);
+    values.put(TableCommentFeedbackAdapter.COL_APP_VERSION,
+        SystemUtils.getAppVersion(FeedbackEditActivity.this));
+    values.put(TableCommentFeedbackAdapter.COL_OS_VERSION,
+        SystemUtils.getOSVersion());
+    values.put(TableCommentFeedbackAdapter.COL_APP_NAME,
+        SystemUtils.getAppName(FeedbackEditActivity.this));
+    values.put(TableCommentFeedbackAdapter.COL_MODEL, SystemUtils.getModel());
+    handler.startInsert(TOKEN_INSERT_COMMENT, null,
+        AnnoContentProvider.COMMENT_PATH_URI, values);
   }
 
 }

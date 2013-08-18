@@ -22,7 +22,8 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-adb_path="/d/software/android-sdks/platform-tools/adb.exe"
+#adb_path="/d/software/android-sdks/platform-tools/adb.exe"
+adb_path="/home/leo/bin/android-sdk-linux/platform-tools/adb"
 
 command_cat_db="$adb_path -d shell 'run-as $1 cat /data/data/$1/databases/$2 > /sdcard/$2'"
 command_pull_db="$adb_path pull /sdcard/$2 ./"

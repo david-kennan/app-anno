@@ -1,4 +1,4 @@
-package co.usersource.anno.sync;
+package co.usersource.annoplugin.sync;
 
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;

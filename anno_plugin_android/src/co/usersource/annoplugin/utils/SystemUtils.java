@@ -13,6 +13,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.DisplayMetrics;
@@ -146,4 +148,15 @@ public final class SystemUtils {
     return android.os.Build.VERSION.RELEASE;
   }
 
+  /**
+   * Checks if the devices has network connectivity.
+   * 
+   * @return if the devices has network connectivity.
+   */
+  public static boolean isOnline(Context context) {
+    ConnectivityManager cm = (ConnectivityManager) context
+        .getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+    return networkInfo != null && networkInfo.isConnectedOrConnecting();
+  }
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package co.usersource.anno.network;
+package co.usersource.annoplugin.network;
 
 import org.json.JSONObject;
 
