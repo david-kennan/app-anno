@@ -224,6 +224,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 				addFieldToUpdate(TableCommentFeedbackAdapter.COL_POSITION_X, updatedObjects.getJSONObject(i), null);
 				addFieldToUpdate(TableCommentFeedbackAdapter.COL_POSITION_Y, updatedObjects.getJSONObject(i), null);
 				addFieldToUpdate(TableCommentFeedbackAdapter.COL_DIRECTION, updatedObjects.getJSONObject(i), null);
+				addFieldToUpdate(TableCommentFeedbackAdapter.COL_APP_VERSION, updatedObjects.getJSONObject(i), null);
+				addFieldToUpdate(TableCommentFeedbackAdapter.COL_OS_VERSION, updatedObjects.getJSONObject(i), null);
+				addFieldToUpdate(TableCommentFeedbackAdapter.COL_MOVED, updatedObjects.getJSONObject(i), null);
+				addFieldToUpdate(TableCommentFeedbackAdapter.COL_LEVEL, updatedObjects.getJSONObject(i), null);
 				decodeByte = Base64.decode(updatedObjects.getJSONObject(i).getString(RequestCreater.JSON_IMAGE), 0);
 				imgManager.saveImageWithKey(BitmapFactory.decodeByteArray(decodeByte, 0, decodeByte.length), 
 						                    updatedObjects.getJSONObject(i).getString(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY));

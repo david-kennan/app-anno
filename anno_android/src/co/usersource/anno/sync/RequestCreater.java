@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.utils.AppConfig;
+import co.usersource.annoplugin.utils.SystemUtils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -25,6 +26,15 @@ public class RequestCreater {
 	public static final String JSON_X = "x";
 	public static final String JSON_Y = "y";
 	public static final String JSON_DIRECTION = "direction";
+	
+	public static final String JSON_APP_VERSION = "app_version";
+	public static final String JSON_APP_NAME = "app_name";
+	public static final String JSON_IS_MOVED = "isMoved";
+	public static final String JSON_LEVEL = "level";
+	public static final String JSON_OS_VERSION = "os_version";
+	public static final String JSON_ANNO_TYPE = "anno_type";
+	public static final String JSON_MODEL = "model";
+	
 	
 	public static final String JSON_UPDATED_OBJECTS = "updatedObjects";
 	public static final String JSON_TIME_STAMP = "lastUpdateDate";
@@ -69,14 +79,19 @@ public class RequestCreater {
 			object.put(JSON_CLIENT_ID, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_ID)));
 			object.put(JSON_COMMENT, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_COMMENT)));
 			object.put(JSON_SCREEN_KEY, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_SCREENSHOT_KEY)));
-			
-			
 
 			object.put(JSON_X, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_X)));
 			object.put(JSON_Y, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y)));
 			object.put(JSON_DIRECTION, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION)));
 			object.put(JSON_TIME_STAMP, data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_TIMESTAMP)));
-			
+			object.put(JSON_ANNO_TYPE, "simple comment");
+			object.put(JSON_APP_NAME, "unknown");
+			object.put(JSON_APP_VERSION, data.getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION));
+			object.put(JSON_MODEL, SystemUtils.getModel());
+			object.put(JSON_OS_VERSION, data.getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION));
+			object.put(JSON_IS_MOVED, data.getColumnIndex(TableCommentFeedbackAdapter.COL_MOVED));
+			object.put(JSON_LEVEL, data.getColumnIndex(TableCommentFeedbackAdapter.COL_LEVEL));
+
 			if(data.getString(data.getColumnIndex(TableCommentFeedbackAdapter.COL_OBJECT_KEY)) == null)	{
 				object.put(JSON_OBJECT_KEY, JSONObject.NULL);
 				++keysCount; 
