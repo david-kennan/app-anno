@@ -31,7 +31,7 @@ public class RequestCreater {
   public static final String JSON_DIRECTION = "direction";
   public static final String JSON_APP_VERSION = "app_version";
   public static final String JSON_OS_VERSION = "os_version";
-  public static final String JSON_IS_MOVED = "is_moved";
+  public static final String JSON_IS_MOVED = "isMoved";
   public static final String JSON_LEVEL = "level";
   public static final String JSON_APP_NAME = "app_name";
   public static final String JSON_MODEL = "model";
@@ -87,10 +87,10 @@ public class RequestCreater {
           .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y)));
       object.put(JSON_DIRECTION, data.getString(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION)));
-      object.put(JSON_APP_VERSION, data.getString(data
-          .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
-      object.put(JSON_OS_VERSION, data.getString(data
-          .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
+//      object.put(JSON_APP_VERSION, data.getString(data
+//          .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
+//      object.put(JSON_OS_VERSION, data.getString(data
+//          .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
       object.put(JSON_IS_MOVED, data.getInt(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_MOVED)));
       object.put(JSON_LEVEL, data.getInt(data
@@ -175,7 +175,7 @@ public class RequestCreater {
       result = new JSONObject();
       try {
         JSONObject item = objects.getJSONObject(currentItem);
-
+        /*
         FileImageManage imageManager = new FileImageManage(context,
             AppConfig.getInstance(context));
         Bitmap img = imageManager.loadImage(item.getString(JSON_SCREEN_KEY));
@@ -186,6 +186,7 @@ public class RequestCreater {
         Log.d(TAG, "image size after compression: " + imgBytes.size());
         item.put(JSON_IMAGE,
             Base64.encodeToString(imgBytes.toByteArray(), Base64.DEFAULT));
+        */
 
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
