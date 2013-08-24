@@ -87,10 +87,10 @@ public class RequestCreater {
           .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y)));
       object.put(JSON_DIRECTION, data.getString(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION)));
-//      object.put(JSON_APP_VERSION, data.getString(data
-//          .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
-//      object.put(JSON_OS_VERSION, data.getString(data
-//          .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
+      // object.put(JSON_APP_VERSION, data.getString(data
+      // .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
+      // object.put(JSON_OS_VERSION, data.getString(data
+      // .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
       object.put(JSON_IS_MOVED, data.getInt(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_MOVED)));
       object.put(JSON_LEVEL, data.getInt(data
@@ -136,14 +136,6 @@ public class RequestCreater {
     return result;
   }
 
-  public void addUpdateDate(String date) {
-    if (null == date) {
-      requestTimestamp = "2000-01-01 00:00:00:00";
-    } else {
-      requestTimestamp = date;
-    }
-  }
-
   public JSONObject getRequest() {
     try {
       request.put(JSON_UPDATED_OBJECTS, objects);
@@ -175,19 +167,19 @@ public class RequestCreater {
       result = new JSONObject();
       try {
         JSONObject item = objects.getJSONObject(currentItem);
-        /*
+
         FileImageManage imageManager = new FileImageManage(context,
             AppConfig.getInstance(context));
         Bitmap img = imageManager.loadImage(item.getString(JSON_SCREEN_KEY));
-        ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
-        // use compression ratio: 50
+        ByteArrayOutputStream imgBytes = new ByteArrayOutputStream(); // use
+                                                                      // compression
+                                                                      // ratio:
+                                                                      // 50
         Log.d(TAG, "original image size:" + imgBytes.size());
-        img.compress(Bitmap.CompressFormat.PNG, 90, imgBytes);
+        img.compress(Bitmap.CompressFormat.PNG, 30, imgBytes);
         Log.d(TAG, "image size after compression: " + imgBytes.size());
         item.put(JSON_IMAGE,
-            Base64.encodeToString(imgBytes.toByteArray(), Base64.DEFAULT));
-        */
-
+            Base64.encodeToString(imgBytes.toByteArray(), Base64.URL_SAFE));
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
         Log.d(TAG, "getNext:" + result.toString(2));
@@ -198,16 +190,4 @@ public class RequestCreater {
     }
     return result;
   }
-
-  public JSONObject getServerDataRequest() {
-    JSONObject result = new JSONObject();
-    try {
-      result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_SERVER_DATA);
-      result.put(JSON_TIME_STAMP, requestTimestamp);
-    } catch (JSONException e) {
-      Log.e(TAG, e.getMessage(), e);
-    }
-    return result;
-  }
-
 }

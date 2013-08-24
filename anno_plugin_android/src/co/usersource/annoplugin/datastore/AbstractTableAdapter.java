@@ -5,6 +5,8 @@ package co.usersource.annoplugin.datastore;
 
 import java.util.List;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -46,6 +48,29 @@ public abstract class AbstractTableAdapter implements TableAdapter {
         database.execSQL(sql);
       }
     }
+  }
+
+  @Override
+  public int delete(String arg1, String[] args2) {
+    throw new UnsupportedOperationException(getTableName()
+        + "delete Not Implemented.");
+  }
+
+  @Override
+  public int update(ContentValues values, String selection,
+      String[] selectionArgs) {
+    SQLiteDatabase database = this.sqliteOpenHelper.getWritableDatabase();
+    return database.update(getTableName(), values, selection, selectionArgs);
+  }
+
+  @Override
+  public Cursor query(String[] projection, String selection,
+      String[] selectionArgs, String sortOrder) {
+    Cursor cursor = null;
+    SQLiteDatabase database = this.sqliteOpenHelper.getReadableDatabase();
+    cursor = database.query(getTableName(), projection, selection,
+        selectionArgs, null, null, sortOrder);
+    return cursor;
   }
 
 }

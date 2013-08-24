@@ -39,7 +39,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private static final String TAG = "AnnoSyncAdapter";
 
   private HttpConnector httpConnector;
-  private String lastUpdateDate;
   private RequestCreater request;
   private DatabaseUpdater db;
 
@@ -48,7 +47,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
    */
   public SyncAdapter(Context context, boolean autoInitialize) {
     super(context, autoInitialize);
-    db = new DatabaseUpdater(context.getContentResolver());
+    db = new DatabaseUpdater(context);
   }
 
   public static void requestSync(Context context) {
@@ -154,6 +153,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
               public void onRequest(JSONObject response) {
                 if (response != null) {
                   Log.d(TAG, "Send Comment response: " + response.toString());
+                  db.updateLastSyncTime(System.currentTimeMillis());
                 }
                 sendItems();
               }
@@ -172,7 +172,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   private RequestCreater getLocalData() {
     Log.v(TAG, "Populate local data that not synched into request.");
     RequestCreater request = new RequestCreater(getContext());
-    request.addUpdateDate(lastUpdateDate);
+    Long lastUpdateDate = db.getLastSyncTime();
     Cursor localData = db.getItemsAfterDate(lastUpdateDate);
 
     if (null != localData) {

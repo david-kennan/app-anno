@@ -25,15 +25,18 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
 
   /* table adapters */
   private TableAdapter tableCommentFeedbackAdapter;
+  private TableAdapter tableLastSyncAdapter;
 
   public AnnoSQLiteOpenHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
     tableCommentFeedbackAdapter = new TableCommentFeedbackAdapter(this);
+    tableLastSyncAdapter = new TableLastSyncAdapter(this);
   }
 
   @Override
   public void onCreate(SQLiteDatabase database) {
     tableCommentFeedbackAdapter.onCreate(database);
+    tableLastSyncAdapter.onCreate(database);
   }
 
   @Override
@@ -113,6 +116,10 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
    */
   public TableAdapter getTableCommentFeedbackAdapter() {
     return tableCommentFeedbackAdapter;
+  }
+
+  public TableAdapter getTableLastSyncAdapter() {
+    return tableLastSyncAdapter;
   }
 
   /**

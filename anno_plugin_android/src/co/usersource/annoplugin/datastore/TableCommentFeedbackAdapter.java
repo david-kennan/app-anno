@@ -54,7 +54,7 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
         + "(%s integer primary key autoincrement, " + "%s text not null, "
         + "%s text not null, " + "%s integer not null, "
         + "%s integer not null, " + "%s integer not null, " + "%s text, "
-        + "%s text," + "%s timestamp not null default current_timestamp, "
+        + "%s text," + "%s integer not null, "
         + "%s text, " + "%s integer not null, "
         + "%s integer not null, %s text, %s text);", TABLE_NAME, COL_ID,
         COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X, COL_POSITION_Y,
@@ -68,31 +68,9 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
 
   @Override
   public long insert(ContentValues values) {
+    values.put(COL_TIMESTAMP, System.currentTimeMillis());
     SQLiteDatabase database = sqliteOpenHelper.getWritableDatabase();
     return database.insert(getTableName(), null, values);
-  }
-
-  @Override
-  public int delete(String arg1, String[] args2) {
-    throw new UnsupportedOperationException(
-        "TableCommentFeedbackAdapter.delete Not Implemented.");
-  }
-
-  @Override
-  public int update(ContentValues values, String selection,
-      String[] selectionArgs) {
-    SQLiteDatabase database = this.sqliteOpenHelper.getWritableDatabase();
-    return database.update(getTableName(), values, selection, selectionArgs);
-  }
-
-  @Override
-  public Cursor query(String[] projection, String selection,
-      String[] selectionArgs, String sortOrder) {
-    Cursor cursor = null;
-    SQLiteDatabase database = this.sqliteOpenHelper.getReadableDatabase();
-    cursor = database.query(getTableName(), projection, selection,
-        selectionArgs, null, null, sortOrder);
-    return cursor;
   }
 
 }
