@@ -529,6 +529,8 @@ define([
                 registry.byId('textTooltip').hide();
                 domStyle.set('textDataAreaContainer', 'display', 'none');
                 domStyle.set("lightCoverScreenshot", "display", 'none');
+
+                domStyle.set("imgDetailScreenshot", "opacity", '1');
             },
             destroy:function ()
             {
