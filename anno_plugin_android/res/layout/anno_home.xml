@@ -26,6 +26,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
             </ListView>
+
+            <Button
+                android:id="@+id/btnCommunity"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:text="Community" />
         </RelativeLayout>
     </android.gesture.GestureOverlayView>
 

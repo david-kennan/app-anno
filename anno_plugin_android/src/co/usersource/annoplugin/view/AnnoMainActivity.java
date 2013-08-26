@@ -13,8 +13,10 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
@@ -54,6 +56,7 @@ public class AnnoMainActivity extends FragmentActivity implements
   // view components.
   private SimpleCursorAdapter adapter;
   private ListView feedbackListView;
+  private Button btnCommunity;
 
   private int level;
 
@@ -99,6 +102,18 @@ public class AnnoMainActivity extends FragmentActivity implements
         getActionBar().setTitle(R.string.plugin_name);
       }
     }
+
+    btnCommunity = (Button) this.findViewById(R.id.btnCommunity);
+    btnCommunity.setOnClickListener(new OnClickListener() {
+
+      @Override
+      public void onClick(View arg0) {
+        Intent intent = new Intent(AnnoMainActivity.this,
+            CommunityActivity.class);
+        AnnoMainActivity.this.startActivity(intent);
+      }
+
+    });
   }
 
   /**
