@@ -7,6 +7,7 @@
     <title>Community MVP</title>
     <!--<link type="text/css" href="../../scripts/dojox/mobile/themes/android/android.css" rel="stylesheet" />-->
     <link type="text/css" href="./css/style.css" rel="stylesheet" />
+    <link type="text/css" href="./css/icomoon.css" rel="stylesheet" />
     <script type="text/javascript">
         var dojoConfig = {
             parseOnLoad:false,
@@ -24,11 +25,14 @@
 
         });
     </script>
+    <script type="text/javascript" src="cordova-2.2.0.js"></script>
 </head>
 <body id="container">
 <!--<div id="loadingMessageDiv" style="width:300px;margin-top: 20px;margin-left:20px;">Loading...</div>-->
 <div id="lightCover" class="lightCover" style="display: none;"></div>
+<div id="lightCoverScreenshot" class="lightCoverScreenshot" style="display: none;"></div>
 <input id="appNameTextBox" style="display: none;z-index: 4000;position: absolute;" type="text" data-dojo-type="dojox/mobile/TextBox" class="commentTextbox" placeholder="Type app name here">
 <button id="hiddenBtn" style="position: absolute;left:-2000px;top: -2000px;">a</button>
+<div id="toastMsgContainer" style="display: none;" class="toastMsgContainer"></div>
 </body>
 </html>

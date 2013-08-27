@@ -34,13 +34,13 @@ class FeedbackComment(AnnoSyncEntity):
     y = db.StringProperty()
     direction = db.StringProperty()
     image = db.BlobProperty()
-    app_version = db.IntegerProperty()
+    app_version = db.StringProperty()
     app_name = db.StringProperty()
     isMoved = db.IntegerProperty()
     level = db.IntegerProperty()
-    os_version = db.IntegerProperty()
+    os_version = db.StringProperty()
     anno_type = db.StringProperty()
-    anno_model = db.StringProperty()
+    model = db.StringProperty()
 
     def createComment(self, data):
         KeyForUpdate = db.get(data[self.JSON_OBJECT_KEY])
@@ -72,7 +72,7 @@ class FeedbackComment(AnnoSyncEntity):
             KeyForUpdate.level = data[self.JSON_LEVEL]
             KeyForUpdate.os_version = data[self.JSON_OS_VERSION]
             KeyForUpdate.anno_type = data[self.JSON_ANNO_TYPE]
-            KeyForUpdate.anno_model = data[self.JSON_MODEL]
+            KeyForUpdate.model = data[self.JSON_MODEL]
             KeyForUpdate.put()
     
     def generateKeys(self, count):

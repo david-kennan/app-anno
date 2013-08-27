@@ -52,7 +52,7 @@ require(["dojo/_base/window"], function (win)
                     },
                     {
                         "author": "David Lee2",
-                        "comment": "Hi, How are you2."
+                        "comment": "Hi, How are you2.Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text Very long text "
                     }
                 ]
             },

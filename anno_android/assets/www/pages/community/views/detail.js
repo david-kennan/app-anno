@@ -37,7 +37,7 @@ define([
             domStyle.set("textDataAreaContainer", "width", (viewPoint.w-30-6-10)+"px");
             domStyle.set("annoTextDetail", "width", (viewPoint.w-30-6-10-8)+"px");
             domStyle.set("textDataAreaContainer", "height", (h-11)+"px");
-            domStyle.set("annoCommentsContainer", "height", (h-104)+"px");
+            domStyle.set("annoCommentsContainer", "height", (h-76)+"px");//104
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
 
@@ -54,10 +54,16 @@ define([
             window.setTimeout(function(){
                 var viewPoint = win.getBox();
                 var tooltipWidget = registry.byId('textTooltip');
+                var parentBox = domGeom.getMarginBox("headingDetail");
 
                 var orignialRatio = dom.byId('imgDetailScreenshot').naturalHeight/dom.byId('imgDetailScreenshot').naturalWidth;
                 dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
                 dom.byId("imgDetailScreenshot").height = (viewPoint.w-30)*orignialRatio;
+
+                domStyle.set("lightCoverScreenshot", "width", (30)+"px");
+                domStyle.set("lightCoverScreenshot", "height", (viewPoint.w-30)*orignialRatio+"px");
+
+                domStyle.set("lightCoverScreenshot", "top", (parentBox.h+2)+"px");
 
                 var toolTipDivWidth = (viewPoint.w-30-viewPoint.w*0.10)
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
@@ -109,6 +115,14 @@ define([
                         tooltipWidget.hide();
                     }
                 }
+
+                /*domStyle.set(document.body, 'height', ((viewPoint.w-30)*orignialRatio-40)+'px');
+                domStyle.set('modelApp_detail', 'height', ((viewPoint.w-30)*orignialRatio-40)+'px');
+
+
+                var parentBox = domGeom.getMarginBox("headingDetail");
+                var h = (((viewPoint.w-30)*orignialRatio-40)-parentBox.h-6);
+                domStyle.set("textDataAreaContainer", "height", (h-11)+"px");*/
 
             }, 500);
         };
@@ -167,6 +181,27 @@ define([
                 {
                     domStyle.set('editAppNameImg', 'display', 'none');
                 }
+
+                adjustAnnoCommentSize();
+            }
+        };
+
+        var adjustAnnoCommentSize = function()
+        {
+            var annoContainer = dom.byId('annoCommentsContainer');
+            var parentBox = domGeom.getMarginBox("headingDetail");
+            var viewPoint = win.getBox();
+            var h = (viewPoint.h-parentBox.h-6);
+
+            domStyle.set("annoCommentsContainer", "height", (h-76)+"px")
+            if (annoContainer.scrollHeight > annoContainer.clientHeight)
+            {
+
+                domStyle.set("annoCommentsContainer", "height", (h-76)+"px");
+            }
+            else
+            {
+                domStyle.set("annoCommentsContainer", "height", 'auto');
             }
         };
 
@@ -188,18 +223,24 @@ define([
 
         var showTextData = function()
         {
+            domStyle.set("imgDetailScreenshot", "opacity", '0.4');
             transit(null, dom.byId('textDataAreaContainer'), {
                 transition:"slide",
                 duration:600
             });
-
             registry.byId('textTooltip').hide();
+            window.setTimeout(function(){
+                domStyle.set("lightCoverScreenshot", "display", '');
+            },400);
 
             textDataAreaShown = true;
+            adjustAnnoCommentSize();
         };
 
         var hideTextData = function()
         {
+            domStyle.set("lightCoverScreenshot", "display", 'none');
+            domStyle.set("imgDetailScreenshot", "opacity", '1');
             transit(dom.byId('textDataAreaContainer'), null, {
                 transition:"slide",
                 duration:600,
@@ -258,11 +299,32 @@ define([
             dom.byId('appNameSpanDetail').innerHTML = newAppName||'unknown';
         };
 
+        var showToastMsg = function(msg)
+        {
+            var vp = win.getBox(), msgContainer = dom.byId('toastMsgContainer');
+
+            msgContainer.innerHTML = msg;
+            domStyle.set(msgContainer, {
+                top: (vp.h-20)/2+'px',
+                left: (vp.w-230)/2+'px',
+                display:''
+            });
+
+            window.setTimeout(function(){
+                domStyle.set(msgContainer, {
+                    display:'none'
+                });
+            }, 2000);
+        };
+
         var startX, startY, startX1, startY1;
+        var tempPos, tempH;
         return {
             // simple view init
             init:function ()
             {
+                /*alert(typeof(navigator.app));
+                navigator.app.backHistory();*/
                 eventsModel = this.loadedModels.events;
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
@@ -310,6 +372,68 @@ define([
                     dom.byId('hiddenBtn').focus();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('imgThumbsUp'), "click", function ()
+                {
+                    if (domClass.contains('imgThumbsUp','icoImgActive'))
+                    {
+                        domClass.remove('imgThumbsUp', 'icoImgActive');
+                    }
+                    else
+                    {
+                        if (domClass.contains('imgFlag','icoImgActive'))
+                        {
+                            showToastMsg("You must unflag the annotation up.");
+                            return;
+                        }
+                        domClass.add('imgThumbsUp', 'icoImgActive');
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('imgFlag'), "click", function ()
+                {
+                    if (domClass.contains('imgFlag','icoImgActive'))
+                    {
+                        domClass.remove('imgFlag', 'icoImgActive');
+                    }
+                    else
+                    {
+                        domClass.add('imgFlag', 'icoImgActive');
+                    }
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
+                {
+                    console.log('aaa');
+                    tempH = domStyle.get('annoCommentsContainer', 'height');
+                    var viewPoint = win.getBox();
+                    window.setTimeout(function(){
+                        domStyle.set('modelApp_detail', 'height', viewPoint.h+'px');
+                    }, 500);
+
+                    /*if ((new Date()-tempDate)<2000) return;
+                    if (domStyle.get('addCommentContainer','top')!=2)
+                    {
+                        tempPos = domGeom.position('addCommentContainer');
+                        domStyle.set('addCommentContainer','top', '2px');
+
+                        window.setTimeout(function(){
+                            dom.byId('hiddenBtn').focus();
+                            dom.byId('addCommentTextBox').blur();
+                            dom.byId('addCommentTextBox').focus();
+                            dom.byId('addCommentTextBox').click();
+                        }, 800);
+                    }*/
+
+                }));
+
+                _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
+                {
+                    window.setTimeout(function(){
+                        //domStyle.set('annoCommentsContainer', 'height', tempH+'px');
+                        adjustAnnoCommentSize();
+                    }, 500);
+                }));
+
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "keydown", function (e)
                 {
                     if (e.keyCode == 13)
@@ -327,6 +451,8 @@ define([
 
                         dom.byId('addCommentTextBox').value = '';
                         dom.byId('hiddenBtn').focus();
+
+                        adjustAnnoCommentSize();
                     }
 
                 }));
@@ -402,6 +528,9 @@ define([
             {
                 registry.byId('textTooltip').hide();
                 domStyle.set('textDataAreaContainer', 'display', 'none');
+                domStyle.set("lightCoverScreenshot", "display", 'none');
+
+                domStyle.set("imgDetailScreenshot", "opacity", '1');
             },
             destroy:function ()
             {
