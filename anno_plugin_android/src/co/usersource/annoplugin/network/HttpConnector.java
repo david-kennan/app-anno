@@ -50,7 +50,8 @@ public class HttpConnector {
   /** Timeouts for httpClient */
   public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
   /** Base URL for Anno services */
-  public static final String BASE_URL = "https://annoserver.appspot.com";
+  public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
+  //public static final String BASE_URL = "https://annoserver.appspot.com";
   /** Auth URL part. */
   public static final String AUTH_URI = BASE_URL + "/_ah/login";
 

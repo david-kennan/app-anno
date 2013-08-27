@@ -87,10 +87,10 @@ public class RequestCreater {
           .getColumnIndex(TableCommentFeedbackAdapter.COL_POSITION_Y)));
       object.put(JSON_DIRECTION, data.getString(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_DIRECTION)));
-      // object.put(JSON_APP_VERSION, data.getString(data
-      // .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
-      // object.put(JSON_OS_VERSION, data.getString(data
-      // .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
+      object.put(JSON_APP_VERSION, data.getString(data
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_APP_VERSION)));
+      object.put(JSON_OS_VERSION, data.getString(data
+          .getColumnIndex(TableCommentFeedbackAdapter.COL_OS_VERSION)));
       object.put(JSON_IS_MOVED, data.getInt(data
           .getColumnIndex(TableCommentFeedbackAdapter.COL_MOVED)));
       object.put(JSON_LEVEL, data.getInt(data
@@ -180,6 +180,7 @@ public class RequestCreater {
         Log.d(TAG, "image size after compression: " + imgBytes.size());
         item.put(JSON_IMAGE,
             Base64.encodeToString(imgBytes.toByteArray(), Base64.URL_SAFE));
+
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
         Log.d(TAG, "getNext:" + result.toString(2));
