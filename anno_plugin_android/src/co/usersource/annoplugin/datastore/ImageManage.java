@@ -24,11 +24,27 @@ public interface ImageManage {
   String saveImage(Bitmap bitmap) throws IOException;
 
   /**
-   * Load a image by the specified key. If the key doesn't exist
+   * Load a image by the specified key. If the key doesn't exist, return null.
    * 
    * @param key
    * @return
    */
   Bitmap loadImage(String key);
+
+  /**
+   * Get image size by the specified key. If the key doesn't exist, return -1.
+   * 
+   * @param key
+   * @return
+   */
+  long imageSize(String key);
+
+  /**
+   * Compress the image by the specified key.
+   * 
+   * @param key
+   * @return
+   */
+  String compressImage(String key);
 
 }

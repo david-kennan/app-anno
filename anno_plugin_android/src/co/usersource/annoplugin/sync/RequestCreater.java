@@ -1,6 +1,5 @@
 package co.usersource.annoplugin.sync;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,8 +9,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.util.Base64;
 import android.util.Log;
 import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
@@ -170,16 +167,9 @@ public class RequestCreater {
 
         FileImageManage imageManager = new FileImageManage(context,
             AppConfig.getInstance(context));
-        Bitmap img = imageManager.loadImage(item.getString(JSON_SCREEN_KEY));
-        ByteArrayOutputStream imgBytes = new ByteArrayOutputStream(); // use
-                                                                      // compression
-                                                                      // ratio:
-                                                                      // 50
-        Log.d(TAG, "original image size:" + imgBytes.size());
-        img.compress(Bitmap.CompressFormat.PNG, 30, imgBytes);
-        Log.d(TAG, "image size after compression: " + imgBytes.size());
-        item.put(JSON_IMAGE,
-            Base64.encodeToString(imgBytes.toByteArray(), Base64.URL_SAFE));
+        String imageKey = item.getString(JSON_SCREEN_KEY);
+        // long imageSize = imageManager.imageSize(imageKey);
+        item.put(JSON_IMAGE, imageManager.compressImage(imageKey));
 
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);

@@ -8,4 +8,8 @@ public class Constants {
   public static final String AUTH_TOKEN = "anno_auth_token";
 
   public static final String DEFAULT_ANNO_TYPE = "simple comment";
+
+  // if image size exceeds this threshold, anno will compress and send to
+  // server.
+  public static final long IMAGE_SIZE_THRESHOLD = 500 * 1024;
 }
