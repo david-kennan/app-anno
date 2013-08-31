@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
+import co.usersource.annoplugin.Test;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.PluginUtils;
@@ -69,6 +70,8 @@ public class AnnoMainActivity extends FragmentActivity implements
     handleIntent();
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+
+    new Test().test(this);
   }
 
   private void handleIntent() {

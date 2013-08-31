@@ -51,7 +51,7 @@ public class HttpConnector {
   public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
   /** Base URL for Anno services */
   public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
-  //public static final String BASE_URL = "https://annoserver.appspot.com";
+  // public static final String BASE_URL = "https://annoserver.appspot.com";
   /** Auth URL part. */
   public static final String AUTH_URI = BASE_URL + "/_ah/login";
 
@@ -92,7 +92,7 @@ public class HttpConnector {
    * @throws IOException
    * @throws ParseException
    */
-  synchronized public void SendRequest(String URI, List<NameValuePair> params,
+  synchronized public void sendRequest(String URI, List<NameValuePair> params,
       IHttpRequestHandler handler) throws ParseException, IOException {
     this.params = params;
     this.httpRequestHandler = handler;

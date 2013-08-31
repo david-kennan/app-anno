@@ -111,7 +111,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
       Log.i(TAG, "Send generateKeys request.");
       params.add(new BasicNameValuePair(SyncAdapter.JSON_REQUEST_PARAM_NAME,
           request.getKeysRequest().toString()));
-      getHttpConnector().SendRequest("/sync", params,
+      getHttpConnector().sendRequest("/sync", params,
           new IHttpRequestHandler() {
 
             public void onRequest(JSONObject response) {
@@ -148,7 +148,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "request data: " + reqString);
         params.add(new BasicNameValuePair(SyncAdapter.JSON_REQUEST_PARAM_NAME,
             req.toString()));
-        getHttpConnector().SendRequest("/sync", params,
+        getHttpConnector().sendRequest("/sync", params,
             new IHttpRequestHandler() {
               public void onRequest(JSONObject response) {
                 if (response != null) {
@@ -193,4 +193,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
     return httpConnector;
   }
+
 }
