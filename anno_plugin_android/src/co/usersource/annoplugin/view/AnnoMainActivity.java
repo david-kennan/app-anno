@@ -71,7 +71,7 @@ public class AnnoMainActivity extends FragmentActivity implements
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
 
-    new Test().test(this);
+    //new Test().test(this);
   }
 
   private void handleIntent() {

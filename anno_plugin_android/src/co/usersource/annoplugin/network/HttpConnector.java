@@ -4,6 +4,7 @@
 package co.usersource.annoplugin.network;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -127,7 +128,11 @@ public class HttpConnector {
         final HttpPost postRequest = new HttpPost(BASE_URL + uri[0]);
         HttpEntity entity = null;
 
-        entity = new UrlEncodedFormEntity(params);
+          if (params == null) {
+              params = new ArrayList<NameValuePair>();
+          }
+
+          entity = new UrlEncodedFormEntity(params);
         postRequest.addHeader(entity.getContentType());
         postRequest.setEntity(entity);
 

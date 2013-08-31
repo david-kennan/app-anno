@@ -112,14 +112,14 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
   }
 
   @Override
-  public void getAnnoDetail(long annoId, final ResponseHandler respHandler) {
+  public void getAnnoDetail(String annoId, final ResponseHandler respHandler) {
     IHttpExecution execution = new IHttpExecution() {
 
       @Override
       public void execute(Map<String, Object> input) {
         try {
-          Long annoId = (Long) input.get("anno_id");
-          String reqUrl = String.format("%s?anno_id=%d", BASE_URL_COMMUNITY,
+            String annoId = (String) input.get("anno_id");
+          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
               annoId);
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
@@ -137,16 +137,16 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
   }
 
   @Override
-  public void updateAppName(long annoId, String appName,
+  public void updateAppName(String annoId, String appName,
       final ResponseHandler respHandler) {
     IHttpExecution execution = new IHttpExecution() {
 
       @Override
       public void execute(Map<String, Object> input) {
         try {
-          Long annoId = (Long) input.get("anno_id");
+            String annoId = (String) input.get("anno_id");
           String appName = (String) input.get("app_name");
-          String reqUrl = String.format("%s?anno_id=%d&setName=%s",
+          String reqUrl = String.format("%s?anno_id=%s&setName=%s",
               BASE_URL_COMMUNITY, annoId, appName);
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));

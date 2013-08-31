@@ -4,8 +4,8 @@ public interface AnnoHttpService {
 
   void getAnnoList(long offset, long limit, ResponseHandler respHandler);
 
-  void getAnnoDetail(long annoId, ResponseHandler respHandler);
+  void getAnnoDetail(String annoId, ResponseHandler respHandler);
 
-  void updateAppName(long annoId, String appName, ResponseHandler respHandler);
+  void updateAppName(String annoId, String appName, ResponseHandler respHandler);
 
 }

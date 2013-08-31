@@ -27,12 +27,15 @@ public class CordovaHttpService extends CordovaPlugin {
   private AnnoHttpService service;
 
   public CordovaHttpService() {
-    service = new AnnoHttpServiceImpl(this.cordova.getActivity());
+    //service = new AnnoHttpServiceImpl(this.cordova.getActivity());
   }
 
   @Override
   public boolean execute(String action, JSONArray args,
       CallbackContext callbackContext) throws JSONException {
+      if (service == null) {
+          service = new AnnoHttpServiceImpl(this.cordova.getActivity());
+      }
     if (GET_ANNO_LIST.equals(action)) {
       getAnnoList(args, callbackContext);
       return true;
@@ -113,7 +116,7 @@ public class CordovaHttpService extends CordovaPlugin {
   private void updateAppName(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
-    Long annoId = jobj.getLong("anno_id");
+      String annoId = jobj.getString("anno_id");
     String appName = jobj.getString("app_name");
     service.updateAppName(annoId, appName, new CordovaResponseHandler(
         callbackContext));
@@ -122,7 +125,7 @@ public class CordovaHttpService extends CordovaPlugin {
   private void getAnnoDetail(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
-    long annoId = jobj.getLong("anno_id");
+      String annoId = jobj.getString("anno_id");
     service.getAnnoDetail(annoId, new CordovaResponseHandler(callbackContext));
   }
 
