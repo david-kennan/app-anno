@@ -20,41 +20,82 @@ define([
         var _connectResults = []; // events connect results
         var eventsModel = null;
         var app = null;
+        var loadingIndicator = null;
+        var loadingMoreData = false,
+            offset = 0, limit=30;
+        var emptyAnno = {
+            "id": 0,
+            "annoText": "0",
+            "app": "0",
+            "author": "0",
+            "screenshot":"0",
+            circleX: 0,
+            circleY:0,
+            deviceInfo:" ",
+            comments:[{
+                author:'',
+                comment:''
+            }]
+        };
 
-        var loadListData = function ()
+        var loadListData = function (poffset)
         {
-            for (var i = 0, l = 5; i < l; i++)
+            if (poffset)
             {
-                var eventData = {
-                    "annoText": "annoText a"+i,
-                    "app": "app a" + i,
-                    "author": "author a" +i,
-                    "screenshot":"demodata/screenshots/sc4.png",
-                    deviceInfo:"Nexus 4, Android 4.3",
-                    comments:[]
-                };
-
-                eventsModel.store.add(eventData);
-                eventsModel.model.push(new getStateful(eventData));
+                loadingMoreData = true;
             }
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data&&!data.annos)
+                    {
+                        hideLoadingIndicator();
+                        loadingMoreData = false;
+                        alert("Annos returned from server are empty.");
+                        return;
+                    }
+                    var annoList = data.annos;
+                    for (var i = 0, l = annoList.length; i < l; i++)
+                    {
+                        var eventData = lang.clone(emptyAnno);
+
+                        eventData.annoText = annoList[i].annoText;
+                        eventData.app = annoList[i].app;
+                        eventData.author = annoList[i].author;
+                        eventData.id = annoList[i].id;
+
+                        eventsModel.store.add(eventData);
+                        eventsModel.model.push(new getStateful(eventData));
+                    }
+
+                    hideLoadingIndicator();
+                    loadingMoreData = false;
+
+                    if (poffset)
+                    {
+                        offset = poffset;
+                    }
+
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+                    loadingMoreData = false;
+                    alert(err);
+                },
+                "CordovaHttpService",
+                "get_anno_list",
+                [{offset: poffset||0, limit: limit}]
+
+            );
         };
 
         var loadMoreData = function()
         {
-            for (var i = 0, l = 5; i < l; i++)
-            {
-                var eventData = {
-                    "annoText": "annoText a"+i,
-                    "app": "app a" + i,
-                    "author": "author a" +i,
-                    "screenshot":"demodata/screenshots/sc4.png",
-                    deviceInfo:"Nexus 4, Android 4.3",
-                    comments:[]
-                };
+            if (loadingMoreData) return;
 
-                eventsModel.store.add(eventData);
-                eventsModel.model.push(new getStateful(eventData));
-            }
+            loadListData(offset+limit);
 
             adjustSize();
         };
@@ -65,6 +106,55 @@ define([
             var parentBox = domGeom.getMarginBox("headingStart");
 
             domStyle.set("listContainerStart", "height", (viewPoint.h-parentBox.h)+"px");
+        };
+
+        var showLoadingIndicator = function()
+        {
+            var cl = loadingIndicator;
+
+            if (!cl)
+            {
+                cl = loadingIndicator = new CanvasLoader('', {
+                    id: "index_loading"
+                });
+                cl.setColor('#302730');
+                cl.setDiameter(50);
+                cl.setRange(0.9);
+            }
+
+            var viewPoint = win.getBox();
+            domStyle.set("index_loading", {
+                position: 'absolute',
+                left: ((viewPoint.w-50)/2) + 'px',
+                top: ((viewPoint.h-50)/2) + 'px',
+                zIndex:4000
+            });
+
+            cl.show();
+        };
+        var hideLoadingIndicator = function()
+        {
+            if (loadingIndicator)
+            {
+                loadingIndicator.hide();
+            }
+        };
+
+        var goBackActivity = function()
+        {
+            cordova.exec(
+                function (data)
+                {
+
+                },
+                function (err)
+                {
+                    alert(err);
+                },
+                "CordovaHttpService",
+                'exit_community',
+                []
+            );
         };
 
         return {
@@ -79,6 +169,12 @@ define([
                 {
                     loadListData();
                 }));
+
+                _connectResults.push(connect.connect(dom.byId('navBtnBackStart'), "click", function ()
+                {
+                    goBackActivity();
+                }));
+
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
@@ -95,6 +191,10 @@ define([
                         loadMoreData();
                     }
                 }));
+
+                window.setTimeout(function(){
+                    loadListData();
+                }, 50);
             },
             afterActivate: function()
             {

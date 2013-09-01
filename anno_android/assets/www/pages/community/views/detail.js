@@ -21,8 +21,11 @@ define([
         var eventsModel = null;
         var currentIndex = 0;
         var textDataAreaShown = false;
+        var loadingIndicator = null;
         var app = null;
         var screenshotScrollTop = null, annoCommentsScrollTop = null;
+        var savingVote = false, savingFlag = false;
+        var currentAuthor = 'me';
 
         var adjustSize = function()
         {
@@ -178,7 +181,7 @@ define([
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
 
-                if (eventsModel.cursor.app == null)
+                if (eventsModel.cursor.app == null||eventsModel.cursor.app == '')
                 {
                     domStyle.set('editAppNameImg', 'display', '');
                     dom.byId('appNameSpanDetail').innerHTML = "unknown";
@@ -202,12 +205,17 @@ define([
             domStyle.set("annoCommentsContainer", "height", (h-76)+"px")
             if (annoContainer.scrollHeight > annoContainer.clientHeight)
             {
-
                 domStyle.set("annoCommentsContainer", "height", (h-76)+"px");
             }
             else
             {
                 domStyle.set("annoCommentsContainer", "height", 'auto');
+            }
+
+            var ach = domGeom.getMarginBox("annoCommentsSet");
+            if ((ach.h +parentBox.h+30) > (viewPoint.h-400))
+            {
+                domStyle.set("lightCoverScreenshot", "height", (ach.h +parentBox.h+30+400)+"px");
             }
         };
 
@@ -215,7 +223,10 @@ define([
         {
             if ( (currentIndex+1)< eventsModel.model.length)
             {
-                setDetailsContext(currentIndex+1);
+                window.setTimeout(function(){
+                    loadDetailData(currentIndex+1);
+                }, 50);
+                //setDetailsContext(currentIndex+1);
             }
         };
 
@@ -223,7 +234,10 @@ define([
         {
             if ( (currentIndex-1)>=0)
             {
-                setDetailsContext(currentIndex-1);
+                window.setTimeout(function(){
+                    loadDetailData(currentIndex-1);
+                }, 50);
+                //setDetailsContext(currentIndex-1);
             }
         };
 
@@ -295,14 +309,83 @@ define([
         var saveAppName = function()
         {
             var newAppName = dom.byId('appNameTextBox').value.trim();
-            dom.byId('hiddenBtn').focus();
+            var id = eventsModel.cursor.id;
 
-            domStyle.set('appNameSpanDetail', 'display', '');
-            domStyle.set('appNameTextBox', {display: 'none'});
-            domStyle.set('lightCover', 'display', 'none');
-            domStyle.set('editAppNameImg', 'display', '');
+            if (newAppName.length <=0)
+            {
+                dom.byId('hiddenBtn').focus();
 
-            dom.byId('appNameSpanDetail').innerHTML = newAppName||'unknown';
+                domStyle.set('appNameSpanDetail', 'display', '');
+                domStyle.set('appNameTextBox', {display: 'none'});
+                domStyle.set('lightCover', 'display', 'none');
+                domStyle.set('editAppNameImg', 'display', '');
+            }
+
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data)
+                    {
+                        hideLoadingIndicator();
+
+                        dom.byId('hiddenBtn').focus();
+
+                        domStyle.set('appNameSpanDetail', 'display', '');
+                        domStyle.set('appNameTextBox', {display: 'none'});
+                        domStyle.set('lightCover', 'display', 'none');
+                        domStyle.set('editAppNameImg', 'display', '');
+
+                        alert("Update app name returned from server is empty.");
+                        return;
+                    }
+
+                    if (data.success != "true")
+                    {
+                        hideLoadingIndicator();
+
+                        dom.byId('hiddenBtn').focus();
+
+                        domStyle.set('appNameSpanDetail', 'display', '');
+                        domStyle.set('appNameTextBox', {display: 'none'});
+                        domStyle.set('lightCover', 'display', 'none');
+                        domStyle.set('editAppNameImg', 'display', '');
+
+                        alert(data.message);
+                        return;
+                    }
+
+
+                    var currentAnno = eventsModel.cursor;
+                    currentAnno.set('app', newAppName);
+
+                    hideLoadingIndicator();
+                    dom.byId('hiddenBtn').focus();
+
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
+
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+
+                    dom.byId('hiddenBtn').focus();
+
+                    domStyle.set('appNameSpanDetail', 'display', '');
+                    domStyle.set('appNameTextBox', {display: 'none'});
+                    domStyle.set('lightCover', 'display', 'none');
+                    domStyle.set('editAppNameImg', 'display', '');
+
+                    alert(err);
+                },
+                "CordovaHttpService",
+                "update_app_name",
+                [{anno_id: id, "app_name": newAppName}]
+
+            );
         };
 
         var showToastMsg = function(msg)
@@ -323,14 +406,268 @@ define([
             }, 2000);
         };
 
+        var showLoadingIndicator = function()
+        {
+            var cl = loadingIndicator;
+
+            if (!cl)
+            {
+                cl = loadingIndicator = new CanvasLoader('', {
+                    id: "detail_loading"
+                });
+                cl.setColor('#302730');
+                cl.setDiameter(50);
+                cl.setRange(0.9);
+            }
+
+            var viewPoint = win.getBox();
+            domStyle.set("detail_loading", {
+                position: 'absolute',
+                left: ((viewPoint.w-50)/2) + 'px',
+                top: ((viewPoint.h-50)/2) + 'px',
+                zIndex:4000
+            });
+
+            cl.show();
+        };
+        var hideLoadingIndicator = function()
+        {
+            if (loadingIndicator)
+            {
+                loadingIndicator.hide();
+            }
+        };
+
+        var loadDetailData = function(cursor)
+        {
+            eventsModel.set("cursorIndex", cursor);
+            var id;
+            if (!eventsModel.cursor)
+            {
+                id = eventsModel.model[0].id;
+            }
+            else
+            {
+                id = eventsModel.cursor.id;
+            }
+
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data&&!data.anno)
+                    {
+                        hideLoadingIndicator();
+                        alert("Anno detail returned from server is empty.");
+                        return;
+                    }
+
+                    if (data.success != "true")
+                    {
+                        hideLoadingIndicator();
+                        alert(data.message);
+                        return;
+                    }
+
+                    var currentAnno = eventsModel.cursor||eventsModel.model[0], returnAnno = data.anno, deviceInfo = '';
+
+                    currentAnno.set('circleX', parseInt(returnAnno.circleX, 10));
+                    currentAnno.set('circleY', parseInt(returnAnno.circleY, 10));
+                    currentAnno.set('screenshot', "data:image/png;base64,"+returnAnno.screenshot);
+
+                    currentAnno.set('comments',new getStateful(returnAnno.comments));
+
+                    deviceInfo = (returnAnno.deviceModel||'&nbsp;')+(returnAnno.OSVersion||'&nbsp;');
+                    currentAnno.set('deviceInfo', deviceInfo);
+
+                    hideLoadingIndicator();
+                    setDetailsContext(cursor);
+
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+                    alert(err);
+                },
+                "CordovaHttpService",
+                "get_anno_detail",
+                [{anno_id: id}]
+
+            );
+        };
+
+        var saveComment = function(comment)
+        {
+            var author = currentAuthor;
+            var id;
+            if (!eventsModel.cursor)
+            {
+                id = eventsModel.model[0].id;
+            }
+            else
+            {
+                id = eventsModel.cursor.id;
+            }
+
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data)
+                    {
+                        hideLoadingIndicator();
+                        alert("Add followup returned from server is empty.");
+                        return;
+                    }
+
+                    if (data.success != "true")
+                    {
+                        hideLoadingIndicator();
+                        alert(data.message);
+                        return;
+                    }
+
+                    console.error(window.JSON.stringify(data));
+                    var currentAnno = eventsModel.cursor||eventsModel.model[0];
+
+                    hideLoadingIndicator();
+                    currentAnno.comments.splice(0,0,new getStateful({author:author, comment:comment}));
+                    adjustAnnoCommentSize();
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+                    alert(err);
+                },
+                "CordovaHttpService",
+                "add_follow_up",
+                [{anno_id: id, comment:comment}]
+
+            );
+        };
+
+        var saveVote = function(action)
+        {
+            if (savingVote) return;
+            savingVote = true;
+            var id;
+            if (!eventsModel.cursor)
+            {
+                id = eventsModel.model[0].id;
+            }
+            else
+            {
+                id = eventsModel.cursor.id;
+            }
+
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data)
+                    {
+                        hideLoadingIndicator();
+                        alert("Data returned from server is empty.");
+                        savingVote = false;
+                        return;
+                    }
+
+                    if (data.success != "true")
+                    {
+                        hideLoadingIndicator();
+                        alert(data.message);
+                        savingVote = false;
+                        return;
+                    }
+
+                    if (action == "remove_vote")
+                    {
+                        domClass.remove('imgThumbsUp', 'icoImgActive');
+                    }
+                    else
+                    {
+                        domClass.add('imgThumbsUp', 'icoImgActive');
+                    }
+                    hideLoadingIndicator();
+                    savingVote = false;
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+                    alert(err);
+                    savingVote = false;
+                },
+                "CordovaHttpService",
+                action,
+                [{anno_id: id}]
+
+            );
+        };
+
+        var saveFlag = function(action)
+        {
+            if (savingFlag) return;
+            savingFlag = true;
+            var id;
+            if (!eventsModel.cursor)
+            {
+                id = eventsModel.model[0].id;
+            }
+            else
+            {
+                id = eventsModel.cursor.id;
+            }
+
+            showLoadingIndicator();
+            cordova.exec(
+                function (data)
+                {
+                    if (!data)
+                    {
+                        hideLoadingIndicator();
+                        alert("Data returned from server is empty.");
+                        savingFlag = false;
+                        return;
+                    }
+
+                    if (data.success != "true")
+                    {
+                        hideLoadingIndicator();
+                        alert(data.message);
+                        savingFlag = false;
+                        return;
+                    }
+
+                    if (action == "remove_flag")
+                    {
+                        domClass.remove('imgFlag', 'icoImgActive');
+                    }
+                    else
+                    {
+                        domClass.add('imgFlag', 'icoImgActive');
+                    }
+                    hideLoadingIndicator();
+                    savingFlag = false;
+                },
+                function (err)
+                {
+                    hideLoadingIndicator();
+                    alert(err);
+                    savingFlag = false;
+                },
+                "CordovaHttpService",
+                action,
+                [{anno_id: id}]
+
+            );
+        };
+
         var startX, startY, startX1, startY1;
         var tempPos, tempH;
         return {
             // simple view init
             init:function ()
             {
-                /*alert(typeof(navigator.app));
-                navigator.app.backHistory();*/
                 eventsModel = this.loadedModels.events;
 
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
@@ -372,7 +709,13 @@ define([
                         return;
                     }
 
-                    eventsModel.cursor.comments.push({author:'unknown', comment:text});
+
+                    //eventsModel.cursor.comments.push({author:'unknown', comment:text});
+
+                    window.setTimeout(function(){
+                        saveComment(text);
+                    },10);
+                    //eventsModel.cursor.comments.push(new getStateful({author:'unknown', comment:text}));
 
                     dom.byId('addCommentTextBox').value = '';
                     dom.byId('hiddenBtn').focus();
@@ -382,7 +725,7 @@ define([
                 {
                     if (domClass.contains('imgThumbsUp','icoImgActive'))
                     {
-                        domClass.remove('imgThumbsUp', 'icoImgActive');
+                        saveVote('remove_vote');
                     }
                     else
                     {
@@ -391,7 +734,8 @@ define([
                             showToastMsg("You must unflag the annotation up.");
                             return;
                         }
-                        domClass.add('imgThumbsUp', 'icoImgActive');
+
+                        saveVote('add_vote');
                     }
                 }));
 
@@ -399,11 +743,11 @@ define([
                 {
                     if (domClass.contains('imgFlag','icoImgActive'))
                     {
-                        domClass.remove('imgFlag', 'icoImgActive');
+                        saveFlag('remove_flag');
                     }
                     else
                     {
-                        domClass.add('imgFlag', 'icoImgActive');
+                        saveFlag('add_flag');
                     }
                 }));
 
@@ -453,12 +797,16 @@ define([
                             return;
                         }
 
-                        eventsModel.cursor.comments.push({author:'unknown', comment:text});
+
+                        //eventsModel.cursor.comments.push({author:'unknown', comment:text});
+
+                        window.setTimeout(function(){
+                            saveComment(text);
+                        },10);
+                        //eventsModel.cursor.comments.push(new getStateful({author:'unknown', comment:text}));
 
                         dom.byId('addCommentTextBox').value = '';
                         dom.byId('hiddenBtn').focus();
-
-                        adjustAnnoCommentSize();
                     }
 
                 }));
@@ -518,12 +866,33 @@ define([
                 drawOrangeCircle();
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
+
+                cordova.exec(
+                    function (data)
+                    {
+                        if (data&&data.current_user)
+                        {
+                            currentAuthor = data.current_user;
+                        }
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "CordovaHttpService",
+                    'get_account_name',
+                    []
+                );
             },
             afterActivate: function()
             {
+                var cursor = this.params["cursor"];
                 if (this.params["cursor"] != null)
                 {
-                    setDetailsContext(this.params["cursor"]);
+                    window.setTimeout(function(){
+                        loadDetailData(cursor);
+                    }, 50);
+
                 }
                 adjustSize();
 
