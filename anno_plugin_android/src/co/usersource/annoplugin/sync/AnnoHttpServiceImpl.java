@@ -2,10 +2,14 @@ package co.usersource.annoplugin.sync;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.accounts.Account;
@@ -147,7 +151,6 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
         try {
           String annoId = (String) input.get("anno_id");
           String appName = (String) input.get("app_name");
-          String urlParams = String.format("", annoId, appName);
           String reqUrl = String.format("%s?anno_id=%s&setName=%s",
               BASE_URL_COMMUNITY, annoId, URLEncoder.encode(appName, "UTF-8"));
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
@@ -169,4 +172,238 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
   private interface IHttpExecution {
     void execute(Map<String, Object> input);
   }
+
+  @Override
+  public void addFollowup(String annoId, String comment,
+      final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          String comment = (String) input.get("comment");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("type", "AddFollowUp");
+          jsonData.put("action", "add");
+          jsonData.put("feedback_key", annoId);
+          jsonData.put("comment", comment);
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    input.put("comment", comment);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void addFlag(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("type", "Flag");
+          jsonData.put("action", "add");
+          jsonData.put("feedback_key", annoId);
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void addVote(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("type", "Vote");
+          jsonData.put("action", "add");
+          jsonData.put("feedback_key", annoId);
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void countVote(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("feedback_key", annoId);
+          jsonData.put("type", "getVotesCount");
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void countFlag(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("feedback_key", annoId);
+          jsonData.put("type", "getFlagsCount");
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void removeFlag(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("feedback_key", annoId);
+          jsonData.put("type", "Flag");
+          jsonData.put("action", "delete");
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  @Override
+  public void removeVote(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("feedback_key", annoId);
+          jsonData.put("type", "Vote");
+          jsonData.put("action", "delete");
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params.add(new BasicNameValuePair(
+              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
 }
