@@ -6,7 +6,7 @@ Created on Jun 16, 2013
 
 import json
 from datetime import datetime
-from AnnoSyncEntity import AnnoSyncEntity
+from model.AnnoSyncEntity import AnnoSyncEntity
 from google.appengine.ext import db
 
 class AnnoJsonEncoder(json.JSONEncoder):
