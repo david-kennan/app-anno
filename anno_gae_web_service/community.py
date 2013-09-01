@@ -31,6 +31,7 @@ class Community(webapp2.RequestHandler):
     TYPE = "type"
     FOLLOWUP_TYPE = "followup"
     FOLLOWUP_COUNT_TYPE = "getFollowUpCount"
+    FOLLOWUP_KEY = "followup_key"
     
     FLAGS_COUNT_TYPE = "getFlagsCount"
     VOTES_COUNT_TYPE = "getVotesCount"
@@ -84,9 +85,18 @@ class Community(webapp2.RequestHandler):
                 anno["circleY"] = item.y
                 anno["deviceModel"] = item.model 
                 anno["OSVersion"] = item.os_version
+                
+                commentItem[Community.FOLLOWUP_KEY] = str(item.key())
                 commentItem["author"] = item.user.nickname()
                 commentItem["comment"] = item.comment
-                comments.append(commentItem)
+                comments.append(commentItem.copy())
+                
+                for followup in item.followups.run():
+                    commentItem[Community.FOLLOWUP_KEY] = str(followup.key())
+                    commentItem["author"] = followup.user.nickname()
+                    commentItem["comment"] = followup.comment
+                    comments.append(commentItem.copy())
+                
                 anno["comments"] = comments
             else:
                 result = self.getResult(False, "Item does not exist")
@@ -123,10 +133,7 @@ class Community(webapp2.RequestHandler):
         
         if data[Community.TYPE] == Community.FOLLOWUP_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                feedback = db.get(data[Community.FEEDBACK_KEY])
-                feedback.followups.filter("user = ", users.get_current_user())
-                db.delete(feedback.flags.get())
-                result = self.getResult(True, "")
+                result = self.deleteByType(Community.FOLLOWUP_TYPE, data[Community.FEEDBACK_KEY])
             else:
                 followUp = FollowUp(user = users.get_current_user(), 
                                     userId = users.get_current_user().user_id())
@@ -134,9 +141,7 @@ class Community(webapp2.RequestHandler):
         
         elif data[Community.TYPE] == Community.FLAG_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                feedback = db.get(data[Community.FEEDBACK_KEY])
-                feedback.flags.filter("user = ", users.get_current_user())
-                db.delete(feedback.flags.get())
+                result = self.deleteByType(Community.FLAG_TYPE, data[Community.FEEDBACK_KEY])
             else:    
                 flag = Flags(user = users.get_current_user(), 
                              userId = users.get_current_user().user_id())
@@ -144,10 +149,7 @@ class Community(webapp2.RequestHandler):
         
         elif data[Community.TYPE] == Community.VOTE_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                feedback = db.get(data[Community.FEEDBACK_KEY])
-                feedback.votes.filter("user = ", users.get_current_user())
-                db.delete(feedback.flags.get())
-                result = self.getResult(True, "")
+                result = self.deleteByType(Community.VOTE_TYPE, data[Community.FEEDBACK_KEY])
             else:
                 vote = Votes(user = users.get_current_user(), 
                          userId = users.get_current_user().user_id())
@@ -165,6 +167,41 @@ class Community(webapp2.RequestHandler):
         else:
             result["success"] = "false"
             result["message"] = message
+        
+        return result
+    
+    
+    def deleteByType(self, deleteType, key):
+        result = {}
+        
+        try:
+            parent = db.get(key)
+            if parent != None:
+                delRec = None
+                if deleteType == Community.FLAG_TYPE:
+                    parent.votes.filter("user = ", users.get_current_user())
+                    delRec = parent.flags.get()
+                elif deleteType == Community.VOTE_TYPE:
+                    parent.votes.filter("user = ", users.get_current_user())
+                    delRec = parent.votes.get()
+                elif deleteType == Community.FOLLOWUP_TYPE:
+                    delRec = parent
+                result = self.deleteRecord(delRec) 
+            else:
+                result = self.getResult(False, "Feedback does not exists")
+        except:
+            result = self.getResult(False, "Unknown exception in getCountByType")
+        
+        return result
+    
+    def deleteRecord(self, record):
+        result = {}
+        
+        if record != None:
+            db.delete(record)
+            result = self.getResult(True,"")
+        else:
+            result = self.getResult(False, "Record does not exists deleteRecord()")
         
         return result
     

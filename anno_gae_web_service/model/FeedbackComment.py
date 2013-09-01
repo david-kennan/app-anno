@@ -51,7 +51,7 @@ class FeedbackComment(AnnoSyncEntity):
             self.addNewComment(data)
             
     def addNewComment(self, data):
-        """self._key = db.get(data[self.JSON_OBJECT_KEY])"""
+        self._key = db.get(data[self.JSON_OBJECT_KEY])
         for name, value in data.items():
             if name == self.JSON_IMAGE:
                 setattr(self, name, str(value))
