@@ -1,6 +1,7 @@
 package co.usersource.annoplugin.sync;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,8 +94,9 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
         try {
           Long offset = (Long) input.get("offset");
           Long limit = (Long) input.get("limit");
-          String reqUrl = String.format("%s?offset=%d&limit=%d",
-              BASE_URL_COMMUNITY, offset, limit);
+          String urlParams = String.format("offset=%d&limit=%d", offset, limit);
+          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
+              URLEncoder.encode(urlParams, "UTF-8"));
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
@@ -118,9 +120,10 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
       @Override
       public void execute(Map<String, Object> input) {
         try {
-            String annoId = (String) input.get("anno_id");
-          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
-              annoId);
+          String annoId = (String) input.get("anno_id");
+          String urlParams = String.format("anno_id=%s", annoId);
+          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
+              URLEncoder.encode(urlParams, "UTF-8"));
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
@@ -144,10 +147,12 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
       @Override
       public void execute(Map<String, Object> input) {
         try {
-            String annoId = (String) input.get("anno_id");
+          String annoId = (String) input.get("anno_id");
           String appName = (String) input.get("app_name");
-          String reqUrl = String.format("%s?anno_id=%s&setName=%s",
-              BASE_URL_COMMUNITY, annoId, appName);
+          String urlParams = String.format("anno_id=%s&setName=%s", annoId,
+              appName);
+          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
+              URLEncoder.encode(urlParams, "UTF-8"));
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
