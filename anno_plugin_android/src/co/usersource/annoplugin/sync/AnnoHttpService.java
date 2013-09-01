@@ -22,5 +22,5 @@ public interface AnnoHttpService {
 
   void removeVote(String annoId, ResponseHandler respHandler);
 
-  // void removeFollowup(String annoId, String followUpId);
+  void removeFollowup(String followUpId, ResponseHandler respHandler);
 }

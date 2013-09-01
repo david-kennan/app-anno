@@ -144,8 +144,11 @@ public class CordovaHttpService extends CordovaPlugin {
   }
 
   private void removeFollowUp(JSONArray args,
-      final CallbackContext callbackContext) {
-    // TODO:
+      final CallbackContext callbackContext) throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String followupId = jobj.getString("followup_id");
+    service.removeFollowup(followupId, new CordovaResponseHandler(
+        callbackContext));
   }
 
   private void addFollowUp(JSONArray args, final CallbackContext callbackContext)

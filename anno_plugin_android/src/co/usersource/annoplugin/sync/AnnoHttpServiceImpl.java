@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Base64;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
@@ -15,6 +14,7 @@ import org.json.JSONObject;
 
 import android.accounts.Account;
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 import co.usersource.annoplugin.network.HttpConnector;
@@ -117,59 +117,63 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
     this.execute(execution, input, respHandler);
   }
 
-    @Override
-    public void getAnnoDetail(String annoId, final ResponseHandler respHandler) {
-        IHttpExecution execution = new IHttpExecution() {
+  @Override
+  public void getAnnoDetail(String annoId, final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
 
-            @Override
-            public void execute(Map<String, Object> input) {
-                try {
-                    String annoId = (String) input.get("anno_id");
-                    String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
-                            annoId);
-                    httpConnector.sendRequest(reqUrl, null, new ImageResponseHandler(
-                            respHandler));
-                } catch (ParseException e) {
-                    respHandler.handleError(e);
-                } catch (IOException e) {
-                    respHandler.handleError(e);
-                }
-            }
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String annoId = (String) input.get("anno_id");
+          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
+              annoId);
+          httpConnector.sendRequest(reqUrl, null, new ImageResponseHandler(
+              respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        }
+      }
 
-        };
-        final Map<String, Object> input = new HashMap<String, Object>();
-        input.put("anno_id", annoId);
-        this.execute(execution, input, respHandler);
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("anno_id", annoId);
+    this.execute(execution, input, respHandler);
+  }
+
+  private class ImageResponseHandler implements IHttpRequestHandler {
+
+    private ResponseHandler handler;
+
+    public ImageResponseHandler(ResponseHandler handler) {
+      this.handler = handler;
     }
 
-    private class ImageResponseHandler implements IHttpRequestHandler {
-
-        private ResponseHandler handler;
-
-        public ImageResponseHandler(ResponseHandler handler) {
-            this.handler = handler;
-        }
-
-        @Override
-        public void onRequest(JSONObject response) {
-            JSONObject obj;
-            String screenshot = null;
-            try {
-                obj = response.getJSONObject("anno");
-                screenshot = obj.getString("screenshot");
-                byte[] imageData = Base64.decode(screenshot, Base64.URL_SAFE);
-                String newScreenshot = Base64.encodeToString(imageData, Base64.DEFAULT);
-                obj.put("screenshot", newScreenshot);
-                handler.handleResponse(response);
-            } catch (JSONException e1) {
-                handler.handleError(e1);
-            }
-        }
-
+    @Override
+    public void onRequest(JSONObject response) {
+      JSONObject obj;
+      String screenshot = null;
+      try {
+        obj = response.getJSONObject("anno");
+        screenshot = obj.getString("screenshot");
+        // android side will use Base64(url_safe) to encode image data and send
+        // to gae server.
+        // on html5 side, it only decodes Base64(default) and render the image.
+        // hence here, we decode it using Base64(url_safe) and then encode it
+        // using Base64(default) and pass to html5.
+        byte[] imageData = Base64.decode(screenshot, Base64.URL_SAFE);
+        String newScreenshot = Base64.encodeToString(imageData, Base64.DEFAULT);
+        obj.put("screenshot", newScreenshot);
+        handler.handleResponse(response);
+      } catch (JSONException e1) {
+        handler.handleError(e1);
+      }
     }
 
+  }
 
-    @Override
+  @Override
   public void updateAppName(String annoId, String appName,
       final ResponseHandler respHandler) {
     IHttpExecution execution = new IHttpExecution() {
@@ -218,8 +222,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("comment", comment);
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -252,8 +256,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("feedback_key", annoId);
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -285,8 +289,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("feedback_key", annoId);
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -317,8 +321,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("type", "getVotesCount");
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -349,8 +353,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("type", "getFlagsCount");
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -382,8 +386,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("action", "delete");
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -415,8 +419,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("action", "delete");
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-          params.add(new BasicNameValuePair(
-              "jsonRequest", jsonData.toString()));
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -434,5 +438,38 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
     this.execute(execution, input, respHandler);
   }
 
+  @Override
+  public void removeFollowup(String followUpId,
+      final ResponseHandler respHandler) {
+    IHttpExecution execution = new IHttpExecution() {
+
+      @Override
+      public void execute(Map<String, Object> input) {
+        try {
+          String followupId = (String) input.get("followup_id");
+          JSONObject jsonData = new JSONObject();
+          jsonData.put("followup_key", followupId);
+          jsonData.put("type", "followup");
+          jsonData.put("action", "delete");
+
+          final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+          params
+              .add(new BasicNameValuePair("jsonRequest", jsonData.toString()));
+          httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
+              new AnnoResponseHandler(respHandler));
+        } catch (ParseException e) {
+          respHandler.handleError(e);
+        } catch (IOException e) {
+          respHandler.handleError(e);
+        } catch (JSONException e) {
+          respHandler.handleError(e);
+        }
+      }
+
+    };
+    final Map<String, Object> input = new HashMap<String, Object>();
+    input.put("followup_id", followUpId);
+    this.execute(execution, input, respHandler);
+  }
 
 }
