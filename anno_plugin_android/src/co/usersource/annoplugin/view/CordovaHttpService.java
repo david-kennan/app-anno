@@ -27,15 +27,15 @@ public class CordovaHttpService extends CordovaPlugin {
   private AnnoHttpService service;
 
   public CordovaHttpService() {
-    //service = new AnnoHttpServiceImpl(this.cordova.getActivity());
+    // service = new AnnoHttpServiceImpl(this.cordova.getActivity());
   }
 
   @Override
   public boolean execute(String action, JSONArray args,
       CallbackContext callbackContext) throws JSONException {
-      if (service == null) {
-          service = new AnnoHttpServiceImpl(this.cordova.getActivity());
-      }
+    if (service == null) {
+      service = new AnnoHttpServiceImpl(this.cordova.getActivity());
+    }
     if (GET_ANNO_LIST.equals(action)) {
       getAnnoList(args, callbackContext);
       return true;
@@ -46,77 +46,93 @@ public class CordovaHttpService extends CordovaPlugin {
       updateAppName(args, callbackContext);
       return true;
     } else if (ADD_FOLLOW_UP.equals(action)) {
-      addFollowUp(args);
+      addFollowUp(args, callbackContext);
       return true;
     } else if (REMOVE_FOLLOW_UP.equals(action)) {
-      removeFollowUp(args);
+      removeFollowUp(args, callbackContext);
       return true;
     } else if (ADD_FLAG.equals(action)) {
-      addFlag(args);
+      addFlag(args, callbackContext);
       return true;
     } else if (REMOVE_FLAG.equals(action)) {
-      removeFlag(args);
+      removeFlag(args, callbackContext);
       return true;
     } else if (ADD_VOTE.equals(action)) {
-      addVote(args);
+      addVote(args, callbackContext);
       return true;
     } else if (REMOVE_VOTE.equals(action)) {
-      removeVote(args);
+      removeVote(args, callbackContext);
       return true;
     } else if (COUNT_VOTE.equals(action)) {
-      countVote(args);
+      countVote(args, callbackContext);
       return true;
     } else if (COUNT_FLAG.equals(action)) {
-      countFlag(args);
+      countFlag(args, callbackContext);
       return true;
     }
     return false;
   }
 
-  private void countFlag(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void countFlag(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.countFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void countVote(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void countVote(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.countVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void removeVote(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void removeVote(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.removeVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void addVote(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void addVote(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.addVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void removeFlag(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void removeFlag(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.removeFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void addFlag(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void addFlag(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    service.addFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
-  private void removeFollowUp(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void removeFollowUp(JSONArray args,
+      final CallbackContext callbackContext) {
+    // TODO:
   }
 
-  private void addFollowUp(JSONArray args) {
-    // TODO Auto-generated method stub
-
+  private void addFollowUp(JSONArray args, final CallbackContext callbackContext)
+      throws JSONException {
+    JSONObject jobj = args.getJSONObject(0);
+    String annoId = jobj.getString("anno_id");
+    String comment = jobj.getString("comment");
+    service.addFollowup(annoId, comment, new CordovaResponseHandler(
+        callbackContext));
   }
 
   private void updateAppName(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
-      String annoId = jobj.getString("anno_id");
+    String annoId = jobj.getString("anno_id");
     String appName = jobj.getString("app_name");
     service.updateAppName(annoId, appName, new CordovaResponseHandler(
         callbackContext));
@@ -125,7 +141,7 @@ public class CordovaHttpService extends CordovaPlugin {
   private void getAnnoDetail(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
-      String annoId = jobj.getString("anno_id");
+    String annoId = jobj.getString("anno_id");
     service.getAnnoDetail(annoId, new CordovaResponseHandler(callbackContext));
   }
 
