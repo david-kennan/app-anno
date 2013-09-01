@@ -142,9 +142,11 @@ define([
             var idx = parseInt(index);
             if (idx < eventsModel.model.length)
             {
-                //dom.byId("imgDetailScreenshot").onload = dddd;
                 eventsModel.set("cursorIndex", idx);
                 currentIndex = idx;
+
+                domClass.remove('imgFlag', 'icoImgActive');
+                domClass.remove('imgThumbsUp', 'icoImgActive');
 
                 if (idx == 0)
                 {
