@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.util.Base64;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
@@ -116,32 +117,59 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
     this.execute(execution, input, respHandler);
   }
 
-  @Override
-  public void getAnnoDetail(String annoId, final ResponseHandler respHandler) {
-    IHttpExecution execution = new IHttpExecution() {
+    @Override
+    public void getAnnoDetail(String annoId, final ResponseHandler respHandler) {
+        IHttpExecution execution = new IHttpExecution() {
 
-      @Override
-      public void execute(Map<String, Object> input) {
-        try {
-          String annoId = (String) input.get("anno_id");
-          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
-              annoId);
-          httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
-              respHandler));
-        } catch (ParseException e) {
-          respHandler.handleError(e);
-        } catch (IOException e) {
-          respHandler.handleError(e);
+            @Override
+            public void execute(Map<String, Object> input) {
+                try {
+                    String annoId = (String) input.get("anno_id");
+                    String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
+                            annoId);
+                    httpConnector.sendRequest(reqUrl, null, new ImageResponseHandler(
+                            respHandler));
+                } catch (ParseException e) {
+                    respHandler.handleError(e);
+                } catch (IOException e) {
+                    respHandler.handleError(e);
+                }
+            }
+
+        };
+        final Map<String, Object> input = new HashMap<String, Object>();
+        input.put("anno_id", annoId);
+        this.execute(execution, input, respHandler);
+    }
+
+    private class ImageResponseHandler implements IHttpRequestHandler {
+
+        private ResponseHandler handler;
+
+        public ImageResponseHandler(ResponseHandler handler) {
+            this.handler = handler;
         }
-      }
 
-    };
-    final Map<String, Object> input = new HashMap<String, Object>();
-    input.put("anno_id", annoId);
-    this.execute(execution, input, respHandler);
-  }
+        @Override
+        public void onRequest(JSONObject response) {
+            JSONObject obj;
+            String screenshot = null;
+            try {
+                obj = response.getJSONObject("anno");
+                screenshot = obj.getString("screenshot");
+                byte[] imageData = Base64.decode(screenshot, Base64.URL_SAFE);
+                String newScreenshot = Base64.encodeToString(imageData, Base64.DEFAULT);
+                obj.put("screenshot", newScreenshot);
+                handler.handleResponse(response);
+            } catch (JSONException e1) {
+                handler.handleError(e1);
+            }
+        }
 
-  @Override
+    }
+
+
+    @Override
   public void updateAppName(String annoId, String appName,
       final ResponseHandler respHandler) {
     IHttpExecution execution = new IHttpExecution() {
@@ -405,5 +433,6 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
     input.put("anno_id", annoId);
     this.execute(execution, input, respHandler);
   }
+
 
 }
