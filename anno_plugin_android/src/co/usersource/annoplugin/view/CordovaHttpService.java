@@ -6,9 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.accounts.Account;
 import co.usersource.annoplugin.sync.AnnoHttpService;
 import co.usersource.annoplugin.sync.AnnoHttpServiceImpl;
 import co.usersource.annoplugin.sync.ResponseHandler;
+import co.usersource.annoplugin.utils.AccountUtils;
 
 public class CordovaHttpService extends CordovaPlugin {
 
@@ -23,6 +25,8 @@ public class CordovaHttpService extends CordovaPlugin {
   public static final String REMOVE_VOTE = "remove_vote";
   public static final String COUNT_VOTE = "count_vote";
   public static final String COUNT_FLAG = "count_flag";
+  public static final String GET_ACCOUNT_NAME = "get_account_name";
+  public static final String EXIT_COMMUNITY = "exit_community";
 
   private AnnoHttpService service;
 
@@ -69,8 +73,32 @@ public class CordovaHttpService extends CordovaPlugin {
     } else if (COUNT_FLAG.equals(action)) {
       countFlag(args, callbackContext);
       return true;
+    } else if (GET_ACCOUNT_NAME.equals(action)) {
+      getAccountName(args, callbackContext);
+      return true;
+    } else if (EXIT_COMMUNITY.equals(action)) {
+      exitCommunity(args, callbackContext);
+      return true;
     }
     return false;
+  }
+
+  private void exitCommunity(JSONArray args, CallbackContext callbackContext) {
+    this.cordova.getActivity().finish();
+  }
+
+  private void getAccountName(JSONArray args, CallbackContext callbackContext)
+      throws JSONException {
+    Account[] accounts = AccountUtils.getAllAccounts(
+        this.cordova.getActivity(), null);
+    if (accounts == null || accounts.length == 0) {
+      callbackContext.error("No available account.");
+      return;
+    }
+    Account account = accounts[0];
+    JSONObject jobj = new JSONObject();
+    jobj.put("current_user", account.name);
+    callbackContext.success(jobj);
   }
 
   private void countFlag(JSONArray args, final CallbackContext callbackContext)
