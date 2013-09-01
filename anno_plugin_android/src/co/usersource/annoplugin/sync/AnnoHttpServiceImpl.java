@@ -94,9 +94,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
         try {
           Long offset = (Long) input.get("offset");
           Long limit = (Long) input.get("limit");
-          String urlParams = String.format("offset=%d&limit=%d", offset, limit);
-          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
-              URLEncoder.encode(urlParams, "UTF-8"));
+          String reqUrl = String.format("%s?offset=%d&limit=%d",
+              BASE_URL_COMMUNITY, offset, limit);
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
@@ -121,9 +120,8 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
       public void execute(Map<String, Object> input) {
         try {
           String annoId = (String) input.get("anno_id");
-          String urlParams = String.format("anno_id=%s", annoId);
-          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
-              URLEncoder.encode(urlParams, "UTF-8"));
+          String reqUrl = String.format("%s?anno_id=%s", BASE_URL_COMMUNITY,
+              annoId);
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
@@ -149,10 +147,9 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
         try {
           String annoId = (String) input.get("anno_id");
           String appName = (String) input.get("app_name");
-          String urlParams = String.format("anno_id=%s&setName=%s", annoId,
-              appName);
-          String reqUrl = String.format("%s?%s", BASE_URL_COMMUNITY,
-              URLEncoder.encode(urlParams, "UTF-8"));
+          String urlParams = String.format("", annoId, appName);
+          String reqUrl = String.format("%s?anno_id=%s&setName=%s",
+              BASE_URL_COMMUNITY, annoId, URLEncoder.encode(appName, "UTF-8"));
           httpConnector.sendRequest(reqUrl, null, new AnnoResponseHandler(
               respHandler));
         } catch (ParseException e) {
