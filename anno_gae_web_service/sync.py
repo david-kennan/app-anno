@@ -6,7 +6,7 @@ Created on Jun 13, 2013
 import webapp2
 import logging
 import json
-from FeedbackComment import FeedbackComment
+from model.FeedbackComment import FeedbackComment
 from google.appengine.api import users
 from datetime import datetime
 from utils.AnnoJsonEncoder import AnnoJsonEncoder

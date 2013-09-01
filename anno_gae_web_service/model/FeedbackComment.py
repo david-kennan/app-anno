@@ -7,6 +7,7 @@ from AnnoSyncEntity import AnnoSyncEntity
 from google.appengine.ext import db
 from datetime import datetime
 
+
 class FeedbackComment(AnnoSyncEntity):
     
     JSON_SCREENSHOT_KEY = "screenshot_key"
@@ -50,7 +51,7 @@ class FeedbackComment(AnnoSyncEntity):
             self.addNewComment(data)
             
     def addNewComment(self, data):
-        self._key = db.get(data[self.JSON_OBJECT_KEY])
+        """self._key = db.get(data[self.JSON_OBJECT_KEY])"""
         for name, value in data.items():
             if name == self.JSON_IMAGE:
                 setattr(self, name, str(value))
@@ -100,4 +101,22 @@ class FeedbackComment(AnnoSyncEntity):
             result.append(item.copy())
         
         return result
+    
+    def setAppName(self, AnnoID, name):
+        result = {}
+        try:
+            anno = db.get(AnnoID)
+            if anno != None:
+                result["success"] = "true"
+                anno.app_name = name
+                anno.put()
+            else:
+                result["success"] = "false"
+                result["message"] = "Anno does not exists"
+        except:
+            result["success"] = "false"
+            result["message"] = "Unknown exception in setAppName"
+            
+        return result
+        
             
