@@ -184,14 +184,14 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           String annoId = (String) input.get("anno_id");
           String comment = (String) input.get("comment");
           JSONObject jsonData = new JSONObject();
-          jsonData.put("type", "AddFollowUp");
+          jsonData.put("type", "followup");
           jsonData.put("action", "add");
           jsonData.put("feedback_key", annoId);
           jsonData.put("comment", comment);
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -225,7 +225,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -258,7 +258,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -290,7 +290,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -322,7 +322,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -355,7 +355,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
@@ -388,7 +388,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params.add(new BasicNameValuePair(
-              SyncAdapter.JSON_REQUEST_PARAM_NAME, jsonData.toString()));
+              "jsonRequest", jsonData.toString()));
           httpConnector.sendRequest(BASE_URL_COMMUNITY, params,
               new AnnoResponseHandler(respHandler));
         } catch (ParseException e) {
