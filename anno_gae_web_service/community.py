@@ -12,6 +12,7 @@ from google.appengine.api import users
 from model.FollowUp import FollowUp
 from model.Flags import Flags
 from model.Votes import Votes
+import sys
 import logging
 
 
@@ -90,8 +91,8 @@ class Community(webapp2.RequestHandler):
                 commentItem["author"] = item.user.nickname()
                 commentItem["comment"] = item.comment
                 comments.append(commentItem.copy())
-                
-                for followup in item.followups.run():
+                               
+                for followup in item.followups.order('-updateTimestamp').run():
                     commentItem[Community.FOLLOWUP_KEY] = str(followup.key())
                     commentItem["author"] = followup.user.nickname()
                     commentItem["comment"] = followup.comment
@@ -102,6 +103,7 @@ class Community(webapp2.RequestHandler):
                 result = self.getResult(False, "Item does not exist")
                 
         except:
+            logging.info(sys.exc_info())
             result = self.getResult(False, "Invalid item key")
        
         result["anno"] = anno
@@ -114,7 +116,7 @@ class Community(webapp2.RequestHandler):
         shortItem = {}
         
         model = FeedbackComment.all()
-        for item in model.run(offset=recOffset, limit=recLimit):
+        for item in model.order('-updateTimestamp').run(offset=recOffset, limit=recLimit):
             shortItem["id"] = str(item.key())
             shortItem["annoText"] = item.comment
             shortItem["app"] = item.app_name
