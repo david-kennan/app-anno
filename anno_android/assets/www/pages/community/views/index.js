@@ -20,6 +20,7 @@ define([
         var _connectResults = []; // events connect results
         var eventsModel = null;
         var app = null;
+        var listScrollTop = 0;
         var loadingIndicator = null;
         var loadingMoreData = false,
             offset = 0, limit=30;
@@ -175,7 +176,6 @@ define([
                     goBackActivity();
                 }));
 
-
                 _connectResults.push(connect.connect(window, has("ios") ? "orientationchange" : "resize", this, function (e)
                 {
                     adjustSize();
@@ -199,6 +199,13 @@ define([
             afterActivate: function()
             {
                 adjustSize();
+                var listContainer = dom.byId('listContainerStart');
+                listContainer.scrollTop = listScrollTop;
+            },
+            beforeDeactivate: function()
+            {
+                var listContainer = dom.byId('listContainerStart');
+                listScrollTop = listContainer.scrollTop;
             },
             destroy:function ()
             {

@@ -23,9 +23,9 @@ define([
         var textDataAreaShown = false;
         var loadingIndicator = null;
         var app = null;
-        var screenshotScrollTop = null, annoCommentsScrollTop = null;
         var savingVote = false, savingFlag = false;
         var currentAuthor = 'me';
+        var annoTooltipY;
 
         var adjustSize = function()
         {
@@ -51,14 +51,19 @@ define([
 
         var screenshotImageOnload = function()
         {
+            annoTooltipY = null;
             window.setTimeout(function(){
+                //console.error(eventsModel.cursor.circleX+","+eventsModel.cursor.circleY);
                 var viewPoint = win.getBox();
+                //console.error(viewPoint.h);
                 var tooltipWidget = registry.byId('textTooltip');
                 var parentBox = domGeom.getMarginBox("headingDetail");
 
                 var orignialRatio = dom.byId('imgDetailScreenshot').naturalHeight/dom.byId('imgDetailScreenshot').naturalWidth;
                 dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
                 dom.byId("imgDetailScreenshot").height = (viewPoint.w-30)*orignialRatio;
+                //console.error("scna "+ dom.byId("imgDetailScreenshot").naturalWidth+","+dom.byId("imgDetailScreenshot").naturalHeight);
+                //console.error("sc "+ dom.byId("imgDetailScreenshot").width+","+dom.byId("imgDetailScreenshot").height);
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
 
@@ -71,35 +76,36 @@ define([
                     domStyle.set("lightCoverScreenshot", "height", ((viewPoint.w-30)*orignialRatio+400)+"px");
                 }
 
-
-                //domStyle.set("lightCoverScreenshot", "top", (parentBox.h+2)+"px");
-
                 var toolTipDivWidth = (viewPoint.w-30-viewPoint.w*0.10);
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
                 if (eventsModel.cursor.circleX != null)
                 {
                     var imageRatio = (viewPoint.w-30)/dom.byId('imgDetailScreenshot').naturalWidth;
-                    //alert(dom.byId('imgDetailScreenshot').naturalWidth);
+                    var imageRatioV = ((viewPoint.w-30)*orignialRatio)/dom.byId('imgDetailScreenshot').naturalHeight;
                     domStyle.set("screenshotAnchorDetail", {
-                        top: eventsModel.cursor.circleY*imageRatio+'px',
+                        top: eventsModel.cursor.circleY*imageRatioV+'px',
                         left: eventsModel.cursor.circleX*imageRatio+'px',
                         display: ''
                     });
 
+                    //console.error("sca "+ eventsModel.cursor.circleX*imageRatio+","+eventsModel.cursor.circleY*imageRatioV);
+
                     domStyle.set("screenshotAnchorInvisibleDetail", {
-                        top: eventsModel.cursor.circleY*imageRatio+'px'
+                        top: eventsModel.cursor.circleY*imageRatioV+'px'
                     });
 
                     if (eventsModel.cursor.circleY > domStyle.get("screenshotTooltipDetail", "height"))
                     {
                         tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['above-centered','below-centered','before','after']);
-                        domStyle.set(tooltipWidget.domNode, 'top', (parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14)+'px');
+                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))+14;
+                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
                     }
                     else
                     {
                         tooltipWidget.show(dom.byId('screenshotAnchorInvisibleDetail'), ['below-centered','below-centered','after','before']);
-                        domStyle.set(tooltipWidget.domNode, 'top', (parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14)+'px');
+                        annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
+                        domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
                     }
 
                     var pos = domGeom.position("screenshotAnchorDetail", true);
@@ -117,22 +123,14 @@ define([
                 {
                     domStyle.set("screenshotAnchorDetail", "display", "none");
                     tooltipWidget.show(dom.byId('screenshotDefaultAnchorDetail'), ['below-centered','below-centered','after','before']);
-                    domStyle.set(tooltipWidget.domNode, 'top', (parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14)+'px');
+                    annoTooltipY = parseInt(domStyle.get(tooltipWidget.domNode, 'top'))-14;
+                    domStyle.set(tooltipWidget.domNode, 'top', annoTooltipY+'px');
 
                     if (textDataAreaShown)
                     {
                         tooltipWidget.hide();
                     }
                 }
-
-                /*domStyle.set(document.body, 'height', ((viewPoint.w-30)*orignialRatio-40)+'px');
-                domStyle.set('modelApp_detail', 'height', ((viewPoint.w-30)*orignialRatio-40)+'px');
-
-
-                var parentBox = domGeom.getMarginBox("headingDetail");
-                var h = (((viewPoint.w-30)*orignialRatio-40)-parentBox.h-6);
-                domStyle.set("textDataAreaContainer", "height", (h-11)+"px");*/
-
             }, 500);
         };
 
@@ -178,7 +176,6 @@ define([
                     dom.byId('screenshotTooltipDetail').innerHTML = shortText;
                 }
 
-                //domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-30)+"px");
                 dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
@@ -228,7 +225,6 @@ define([
                 window.setTimeout(function(){
                     loadDetailData(currentIndex+1);
                 }, 50);
-                //setDetailsContext(currentIndex+1);
             }
         };
 
@@ -239,7 +235,6 @@ define([
                 window.setTimeout(function(){
                     loadDetailData(currentIndex-1);
                 }, 50);
-                //setDetailsContext(currentIndex-1);
             }
         };
 
@@ -479,7 +474,7 @@ define([
 
                     currentAnno.set('comments',new getStateful(returnAnno.comments));
 
-                    deviceInfo = (returnAnno.deviceModel||'&nbsp;')+(returnAnno.OSVersion||'&nbsp;');
+                    deviceInfo = (returnAnno.deviceModel||'&nbsp;')+'&nbsp;'+(returnAnno.OSVersion||'&nbsp;');
                     currentAnno.set('deviceInfo', deviceInfo);
 
                     hideLoadingIndicator();
@@ -665,7 +660,6 @@ define([
         };
 
         var startX, startY, startX1, startY1;
-        var tempPos, tempH;
         return {
             // simple view init
             init:function ()
@@ -711,13 +705,9 @@ define([
                         return;
                     }
 
-
-                    //eventsModel.cursor.comments.push({author:'unknown', comment:text});
-
                     window.setTimeout(function(){
                         saveComment(text);
                     },10);
-                    //eventsModel.cursor.comments.push(new getStateful({author:'unknown', comment:text}));
 
                     dom.byId('addCommentTextBox').value = '';
                     dom.byId('hiddenBtn').focus();
@@ -755,33 +745,15 @@ define([
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "focus", function ()
                 {
-                    console.log('aaa');
-                    tempH = domStyle.get('annoCommentsContainer', 'height');
                     var viewPoint = win.getBox();
                     window.setTimeout(function(){
                         domStyle.set('modelApp_detail', 'height', (viewPoint.h+400)+'px');
                     }, 500);
-
-                    /*if ((new Date()-tempDate)<2000) return;
-                    if (domStyle.get('addCommentContainer','top')!=2)
-                    {
-                        tempPos = domGeom.position('addCommentContainer');
-                        domStyle.set('addCommentContainer','top', '2px');
-
-                        window.setTimeout(function(){
-                            dom.byId('hiddenBtn').focus();
-                            dom.byId('addCommentTextBox').blur();
-                            dom.byId('addCommentTextBox').focus();
-                            dom.byId('addCommentTextBox').click();
-                        }, 800);
-                    }*/
-
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('addCommentTextBox'), "blur", function ()
                 {
                     window.setTimeout(function(){
-                        //domStyle.set('annoCommentsContainer', 'height', tempH+'px');
                         adjustAnnoCommentSize();
                     }, 500);
                 }));
@@ -799,13 +771,9 @@ define([
                             return;
                         }
 
-
-                        //eventsModel.cursor.comments.push({author:'unknown', comment:text});
-
                         window.setTimeout(function(){
                             saveComment(text);
                         },10);
-                        //eventsModel.cursor.comments.push(new getStateful({author:'unknown', comment:text}));
 
                         dom.byId('addCommentTextBox').value = '';
                         dom.byId('hiddenBtn').focus();
@@ -865,6 +833,14 @@ define([
                     showAppNameTextBox();
                 }));
 
+                _connectResults.push(connect.connect(dom.byId('modelApp_detail'), "scroll", function (e)
+                {
+                    if (annoTooltipY == null) return;
+                    var parentScrollTop = dom.byId('modelApp_detail').scrollTop;
+
+                    domStyle.set(registry.byId('textTooltip').domNode, 'top', (annoTooltipY-parentScrollTop)+'px');
+                }));
+
                 drawOrangeCircle();
 
                 dom.byId("imgDetailScreenshot").onload = screenshotImageOnload;
@@ -894,7 +870,6 @@ define([
                     window.setTimeout(function(){
                         loadDetailData(cursor);
                     }, 50);
-
                 }
                 adjustSize();
 
@@ -908,6 +883,8 @@ define([
                 domStyle.set("lightCoverScreenshot", "display", 'none');
 
                 domStyle.set("imgDetailScreenshot", "opacity", '1');
+
+                hideLoadingIndicator();
             },
             destroy:function ()
             {
