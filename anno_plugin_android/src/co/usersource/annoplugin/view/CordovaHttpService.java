@@ -12,8 +12,21 @@ import co.usersource.annoplugin.sync.AnnoHttpServiceImpl;
 import co.usersource.annoplugin.sync.ResponseHandler;
 import co.usersource.annoplugin.utils.AccountUtils;
 
+/**
+ * This is the interface to let html5 interact with. This is a cordova plugin,
+ * more detail please refer to
+ * http://docs.phonegap.com/en/2.2.0/guide_plugin-development_android_index
+ * .md.html.
+ * 
+ * This plugin provides services that html5 will call from native Android SDK
+ * codes.
+ * 
+ * @author topcircler
+ * 
+ */
 public class CordovaHttpService extends CordovaPlugin {
 
+  // plugin action names.
   public static final String GET_ANNO_LIST = "get_anno_list";
   public static final String GET_ANNO_DETAIL = "get_anno_detail";
   public static final String UPDATE_APP_NAME = "update_app_name";
@@ -31,7 +44,6 @@ public class CordovaHttpService extends CordovaPlugin {
   private AnnoHttpService service;
 
   public CordovaHttpService() {
-    // service = new AnnoHttpServiceImpl(this.cordova.getActivity());
   }
 
   @Override
@@ -83,10 +95,23 @@ public class CordovaHttpService extends CordovaPlugin {
     return false;
   }
 
+  /**
+   * Exit community and return back to anno home.
+   * 
+   * @param args
+   * @param callbackContext
+   */
   private void exitCommunity(JSONArray args, CallbackContext callbackContext) {
     this.cordova.getActivity().finish();
   }
 
+  /**
+   * Get google account that community will use to display current user.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void getAccountName(JSONArray args, CallbackContext callbackContext)
       throws JSONException {
     Account[] accounts = AccountUtils.getAllAccounts(
@@ -101,6 +126,13 @@ public class CordovaHttpService extends CordovaPlugin {
     callbackContext.success(jobj);
   }
 
+  /**
+   * Get the number of the specified anno flags.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void countFlag(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -108,6 +140,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.countFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Get the number of the specified anno votes.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void countVote(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -115,6 +154,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.countVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Remove a vote for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void removeVote(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -122,6 +168,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.removeVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Add a vote for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void addVote(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -129,6 +182,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.addVote(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Remove a flag for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void removeFlag(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -136,6 +196,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.removeFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Add a flag for the specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void addFlag(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -143,6 +210,13 @@ public class CordovaHttpService extends CordovaPlugin {
     service.addFlag(annoId, new CordovaResponseHandler(callbackContext));
   }
 
+  /**
+   * Remove follow up for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void removeFollowUp(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -151,6 +225,13 @@ public class CordovaHttpService extends CordovaPlugin {
         callbackContext));
   }
 
+  /**
+   * Add a follow up for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void addFollowUp(JSONArray args, final CallbackContext callbackContext)
       throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -160,6 +241,13 @@ public class CordovaHttpService extends CordovaPlugin {
         callbackContext));
   }
 
+  /**
+   * Update application name for a specified anno.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void updateAppName(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -169,6 +257,13 @@ public class CordovaHttpService extends CordovaPlugin {
         callbackContext));
   }
 
+  /**
+   * Get a certain anno detail.
+   * 
+   * @param args
+   * @param callbackContext
+   * @throws JSONException
+   */
   private void getAnnoDetail(JSONArray args,
       final CallbackContext callbackContext) throws JSONException {
     JSONObject jobj = args.getJSONObject(0);
@@ -177,10 +272,10 @@ public class CordovaHttpService extends CordovaPlugin {
   }
 
   /**
+   * Get all anno list.
    * 
    * @param args
-   *          args is an long array, first element is offset, second element is
-   *          limit.
+   * @param callbackContext
    * @throws JSONException
    */
   private void getAnnoList(JSONArray args, final CallbackContext callbackContext)
@@ -192,6 +287,12 @@ public class CordovaHttpService extends CordovaPlugin {
         callbackContext));
   }
 
+  /**
+   * A common response handler to call back to html5.
+   * 
+   * @author topcircler
+   * 
+   */
   private class CordovaResponseHandler implements ResponseHandler {
 
     private CallbackContext callbackContext;
@@ -202,6 +303,7 @@ public class CordovaHttpService extends CordovaPlugin {
 
     @Override
     public void handleResponse(final JSONObject response) {
+      // not run in main thread.
       cordova.getThreadPool().execute(new Runnable() {
         public void run() {
           callbackContext.success(response);

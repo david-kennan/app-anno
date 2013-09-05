@@ -23,19 +23,33 @@ import co.usersource.annoplugin.network.IHttpRequestHandler;
 import co.usersource.annoplugin.utils.AccountUtils;
 import co.usersource.annoplugin.utils.SystemUtils;
 
+/**
+ * Http implementation of anno services.
+ * 
+ * @author topcircler
+ * 
+ */
 public class AnnoHttpServiceImpl implements AnnoHttpService {
+
+  /** community context path. */
+  private static final String BASE_URL_COMMUNITY = "/community";
+  private static final String TAG = AnnoHttpServiceImpl.class.getSimpleName();
 
   private HttpConnector httpConnector;
   private Context context;
   private Account account;
-  private static final String BASE_URL_COMMUNITY = "/community";
-  private static final String TAG = AnnoHttpServiceImpl.class.getSimpleName();
 
   public AnnoHttpServiceImpl(Context context) {
     this.context = context;
     httpConnector = new HttpConnector();
   }
 
+  /**
+   * Common http response handler implementation.
+   * 
+   * @author topcircler
+   * 
+   */
   private class AnnoResponseHandler implements IHttpRequestHandler {
 
     private ResponseHandler handler;

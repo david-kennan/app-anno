@@ -7,7 +7,7 @@ import android.content.Context;
 /**
  * Utilies to process account information.
  * 
- * @author leo
+ * @author topcircler
  * 
  */
 public final class AccountUtils {

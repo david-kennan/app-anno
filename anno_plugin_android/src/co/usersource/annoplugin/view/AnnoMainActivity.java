@@ -71,6 +71,8 @@ public class AnnoMainActivity extends FragmentActivity implements
     handleIntent();
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+
+    // load default preferences.
     loadPreferences();
   }
 
@@ -141,14 +143,14 @@ public class AnnoMainActivity extends FragmentActivity implements
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     // Handle item selection
-//    switch (item.getItemId()) {
-//    case R.id.settings_menu:
-      Intent i = new Intent(this, AnnoSettingActivity.class);
-      startActivity(i);
-      return true;
-//    default:
-//      return super.onOptionsItemSelected(item);
-//    }
+    // switch (item.getItemId()) {
+    // case R.id.settings_menu:
+    Intent i = new Intent(this, AnnoSettingActivity.class);
+    startActivity(i);
+    return true;
+    // default:
+    // return super.onOptionsItemSelected(item);
+    // }
   }
 
   @Override

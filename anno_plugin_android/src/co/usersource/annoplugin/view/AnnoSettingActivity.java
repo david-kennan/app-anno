@@ -8,6 +8,14 @@ import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 import co.usersource.annoplugin.R;
 
+/**
+ * This is the setting preference.
+ * 
+ * It provides a way for developer/test users to change server url quickly.
+ * 
+ * @author topcircler
+ * 
+ */
 public class AnnoSettingActivity extends PreferenceActivity implements
     OnSharedPreferenceChangeListener {
 
