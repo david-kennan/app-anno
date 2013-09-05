@@ -35,9 +35,12 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.utils.Constants;
 
 /**
@@ -52,9 +55,7 @@ public class HttpConnector {
   public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
   /** Base URL for Anno services */
   public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
-  // public static final String BASE_URL = "https://annoserver.appspot.com";
-  /** Auth URL part. */
-  public static final String AUTH_URI = BASE_URL + "/_ah/login";
+  //public static final String BASE_URL = "https://annoserver.appspot.com";
 
   private DefaultHttpClient httpClient;
   private Context applicationContext;
@@ -125,14 +126,21 @@ public class HttpConnector {
     protected JSONObject doInBackground(String... uri) {
       JSONObject result = null;
       try {
-        final HttpPost postRequest = new HttpPost(BASE_URL + uri[0]);
+        SharedPreferences sharedPref = PreferenceManager
+            .getDefaultSharedPreferences(applicationContext);
+        String prefSyncUrl = sharedPref.getString(
+            applicationContext.getString(R.string.prefSyncServerUrl_Key),
+            BASE_URL);
+        Log.d(TAG, "Preference Sync URL: " + prefSyncUrl);
+
+        final HttpPost postRequest = new HttpPost(prefSyncUrl + uri[0]);
         HttpEntity entity = null;
 
-          if (params == null) {
-              params = new ArrayList<NameValuePair>();
-          }
+        if (params == null) {
+          params = new ArrayList<NameValuePair>();
+        }
 
-          entity = new UrlEncodedFormEntity(params);
+        entity = new UrlEncodedFormEntity(params);
         postRequest.addHeader(entity.getContentType());
         postRequest.setEntity(entity);
 
@@ -180,13 +188,25 @@ public class HttpConnector {
    * This class intended to be used to obtain auth cookies for current instance.
    */
   private class GetCookieTask extends AsyncTask<String, Integer, Boolean> {
+    private String prefSyncUrl;
+    private String authUrl;
+
     protected Boolean doInBackground(String... tokens) {
       try {
         // Don't follow redirects
         getHttpClient().getParams().setBooleanParameter(
             ClientPNames.HANDLE_REDIRECTS, false);
 
-        HttpGet http_get = new HttpGet(AUTH_URI + "?continue=" + BASE_URL
+        SharedPreferences sharedPref = PreferenceManager
+            .getDefaultSharedPreferences(applicationContext);
+        prefSyncUrl = sharedPref.getString(
+            applicationContext.getString(R.string.prefSyncServerUrl_Key),
+            BASE_URL);
+        authUrl = prefSyncUrl + "/_ah/login";
+        Log.d(TAG, "Preference Sync URL:" + prefSyncUrl);
+        Log.d(TAG, "Auth URL:" + authUrl);
+
+        HttpGet http_get = new HttpGet(authUrl + "?continue=" + prefSyncUrl
             + "&auth=" + tokens[0]);
         HttpResponse response;
         response = getHttpClient().execute(http_get);

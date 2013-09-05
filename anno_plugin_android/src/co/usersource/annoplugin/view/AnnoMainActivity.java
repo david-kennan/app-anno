@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -12,6 +13,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -20,7 +22,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
-import co.usersource.annoplugin.Test;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.utils.PluginUtils;
@@ -70,8 +71,11 @@ public class AnnoMainActivity extends FragmentActivity implements
     handleIntent();
 
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+    loadPreferences();
+  }
 
-    //new Test().test(this);
+  private void loadPreferences() {
+    PreferenceManager.setDefaultValues(this, R.xml.anno_preferences, false);
   }
 
   private void handleIntent() {
@@ -132,6 +136,19 @@ public class AnnoMainActivity extends FragmentActivity implements
     // Inflate the menu; this adds items to the action bar if it is present.
     getMenuInflater().inflate(R.menu.anno_main, menu);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    // Handle item selection
+//    switch (item.getItemId()) {
+//    case R.id.settings_menu:
+      Intent i = new Intent(this, AnnoSettingActivity.class);
+      startActivity(i);
+      return true;
+//    default:
+//      return super.onOptionsItemSelected(item);
+//    }
   }
 
   @Override
