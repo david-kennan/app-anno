@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <title>Community MVP</title>
+    <link type="text/css" href="./css/style.css" rel="stylesheet" />
+    <script type="text/javascript">
+        var dojoConfig = {
+            parseOnLoad: true,
+            mblHideAddressBar: false,
+            mblAndroidWorkaround: false,
+            mblAlwaysHideAddressBar: false,
+            //mblThemeFiles: ['base','PageIndicator'],
+            async: 1,
+            mblUserAgent: 'iPhone'//
+        };
+    </script>
+    <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
+    <script>
+        require(["dojo/ready", "dojo/_base/connect", "dojo/_base/lang", "dijit/registry", "dojox/mobile/deviceTheme","dojo/parser","dojox/mobile/compat"], function(ready, connect, lang, registry)
+        {
+            nextView = function ()
+            {
+                var currentView = registry.byId('view1').getShowingView();
+                if (currentView.id == "view5")
+                {
+                    gotoMainActivity();
+                }
+                else
+                {
+                    connect.publish("/dojox/mobile/nextPage", [registry.byId('pid')]);
+                }
+
+            };
+
+            var gotoMainActivity = function()
+            {
+                console.error("need goto main activity.");
+                cordova.exec(
+                        function (data)
+                        {
+
+                        },
+                        function (err)
+                        {
+                            alert(err);
+                        },
+                        "CordovaHttpService",
+                        'exit_community',
+                        []
+                );
+            };
+
+            ready(function ()
+            {
+                document.getElementById('introText2').style.display = '';
+                document.getElementById('introText3').style.display = '';
+                document.getElementById('introText4').style.display = '';
+                document.getElementById('introText5').style.display = '';
+
+                var lastView = registry.byId('view5');
+
+                lastView.set('scrollTo', function (to)
+                {
+                    // Overrides dojox/mobile/scrollable.scrollTo().
+                    if (!this._beingFlipped)
+                    {
+                        var newView, x;
+                        if (to.x < 0)
+                        {
+                            newView = this.nextView(this.domNode);
+                            x = to.x + this.domNode.offsetWidth;
+                        } else
+                        {
+                            newView = this.previousView(this.domNode);
+                            x = to.x - this.domNode.offsetWidth;
+                        }
+                        if (newView)
+                        {
+                            if (newView.domNode.style.display === "none")
+                            {
+                                newView.domNode.style.display = "";
+                                newView.resize();
+                            }
+                            newView._beingFlipped = true;
+                            newView.scrollTo({x: x});
+                            newView._beingFlipped = false;
+                        }
+                        else
+                        {
+                            gotoMainActivity();
+                        }
+                    }
+
+                    arguments.callee.nom = "scrollTo";
+                    this.inherited(arguments);
+                });
+
+                window.setTimeout(function (){
+                    registry.byId('pid').domNode.style.bottom = '4px';
+                }, 500);
+
+            });
+        });
+    </script>
+    <script type="text/javascript" src="../community/cordova.js"></script>
+</head>
+<body id="container">
+<div id="view1" data-dojo-type="dojox/mobile/SwapView">
+    <img alt="" width="100%" src="css/images/1.jpg">
+    <div class="introText">Tell the world how to make apps better for you in 3 easy steps!</div>
+</div>
+
+<div id="view2" data-dojo-type="dojox/mobile/SwapView">
+    <img alt="" width="100%" src="css/images/1.jpg">
+    <div class="introText" id="introText2" style="display: none;">1: Take a screenshot on your phone by pressing hardware keys like this:
+        <br>&nbsp;* Power + Volume down or
+        <br>&nbsp;* Power + Home or
+        <br>&nbsp;* Power + Home + volume down</div>
+</div>
+
+<div id="view3" data-dojo-type="dojox/mobile/SwapView">
+    <img alt="" width="100%" src="css/images/1.jpg">
+    <div class="introText" id="introText3" style="display: none;">2: Use the "Share" menu to pass the screenshot to Anno.</div>
+</div>
+
+<div id="view4" data-dojo-type="dojox/mobile/SwapView">
+    <img alt="" width="100%" src="css/images/1.jpg">
+    <div class="introText" id="introText4" style="display: none;">3: Point the orange circle where you want to type your idea, then tap "Send".</div>
+</div>
+
+<div id="view5" data-dojo-type="dojox/mobile/SwapView">
+    <img alt="" width="100%" src="css/images/1.jpg">
+    <div class="introText" id="introText5" style="display: none;">That's it, you made an anno! You'll be back in your app now. Launch Anno to discuss annos in the community feed.</div>
+</div>
+
+<div data-dojo-type="dojox/mobile/PageIndicator" id="pid" data-dojo-props='fixed:"bottom"'></div>
+<div id="navBtnNext" class="icon-arrow-right" onclick="nextView()"></div>
+</body>
+</html>
