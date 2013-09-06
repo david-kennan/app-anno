@@ -63,17 +63,20 @@ public class AnnoMainActivity extends FragmentActivity implements
   private int level;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.anno_home);
+  protected void onCreate(Bundle savedInstanceState)
+  {
+      //Intent intent = new Intent(AnnoMainActivity.this,
+              IntroActivity.class);
+      //AnnoMainActivity.this.startActivity(intent);
+      super.onCreate(savedInstanceState);
+      setContentView(R.layout.anno_home);
 
-    setComponent();
-    handleIntent();
+      setComponent();
+      handleIntent();
 
-    AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
-
-    // load default preferences.
-    loadPreferences();
+      // load default preferences.
+      AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+      loadPreferences();
   }
 
   private void loadPreferences() {

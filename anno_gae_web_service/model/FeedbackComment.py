@@ -81,7 +81,7 @@ class FeedbackComment(AnnoSyncEntity):
         if(count > 0):
             baseKey = db.Key.from_path('FeedbackComment', 1)
             ids =  db.allocate_ids(baseKey, count)
-            idsRange = (ids[0], ids[1] + 1)
+            idsRange = range(ids[0], ids[1] + 1)
         
             for item in range(0, count):
                 result.append(str(db.Key.from_path('FeedbackComment', idsRange[item])))
