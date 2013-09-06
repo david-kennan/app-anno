@@ -66,7 +66,7 @@ public class AnnoMainActivity extends FragmentActivity implements
   protected void onCreate(Bundle savedInstanceState)
   {
       //Intent intent = new Intent(AnnoMainActivity.this,
-              IntroActivity.class);
+              //IntroActivity.class);
       //AnnoMainActivity.this.startActivity(intent);
       super.onCreate(savedInstanceState);
       setContentView(R.layout.anno_home);
