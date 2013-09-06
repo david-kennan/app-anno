@@ -1,5 +1,6 @@
 define([
     "dojo/_base/array",
+    "dojo/_base/fx",
     "dojo/dom",
     "dojo/dom-class",
     "dojo/dom-geometry",
@@ -15,7 +16,7 @@ define([
     "dojo/store/Memory",
     "dojox/mvc/getStateful"
 ],
-    function (arrayUtil, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful)
+    function (arrayUtil, baseFX, dom, domClass, domGeom, domStyle, query, lang, connect, win, has, sniff, registry, transit, Memory, getStateful)
     {
         var _connectResults = [];
         var eventsModel = null;
@@ -23,7 +24,7 @@ define([
         var textDataAreaShown = false;
         var loadingIndicator = null;
         var app = null;
-        var savingVote = false, savingFlag = false;
+        var savingVote = false, savingFlag = false, screenshotMargin = 8;
         var currentAuthor = 'me';
         var annoTooltipY;
 
@@ -31,7 +32,7 @@ define([
         {
             var viewPoint = win.getBox();
             var parentBox = domGeom.getMarginBox("headingDetail");
-            domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-30)+"px");
+            domStyle.set("imgDetailScreenshot", "width", (viewPoint.w-screenshotMargin)+"px");
 
             var h = (viewPoint.h-parentBox.h-6);
             domStyle.set("textDataAreaContainer", "width", (viewPoint.w-30-6-10)+"px");
@@ -41,7 +42,7 @@ define([
 
             domStyle.set("appNameTextBox", "width", (viewPoint.w-30-6-10-40)+"px");
 
-            domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-30-viewPoint.w*0.10)+"px");
+            domStyle.set("screenshotTooltipDetail", "width", (viewPoint.w-screenshotMargin-viewPoint.w*0.10)+"px");
 
 
             //var tooltipWidget = registry.byId('textTooltip');
@@ -60,29 +61,29 @@ define([
                 var parentBox = domGeom.getMarginBox("headingDetail");
 
                 var orignialRatio = dom.byId('imgDetailScreenshot').naturalHeight/dom.byId('imgDetailScreenshot').naturalWidth;
-                dom.byId("imgDetailScreenshot").width = (viewPoint.w-30);
-                dom.byId("imgDetailScreenshot").height = (viewPoint.w-30)*orignialRatio;
+                dom.byId("imgDetailScreenshot").width = (viewPoint.w-screenshotMargin);
+                dom.byId("imgDetailScreenshot").height = (viewPoint.w-screenshotMargin)*orignialRatio;
                 //console.error("scna "+ dom.byId("imgDetailScreenshot").naturalWidth+","+dom.byId("imgDetailScreenshot").naturalHeight);
                 //console.error("sc "+ dom.byId("imgDetailScreenshot").width+","+dom.byId("imgDetailScreenshot").height);
 
                 domStyle.set("lightCoverScreenshot", "width", (30)+"px");
 
-                if ((viewPoint.w-30)*orignialRatio< viewPoint.h)
+                if ((viewPoint.w-screenshotMargin)*orignialRatio< viewPoint.h)
                 {
                     domStyle.set("lightCoverScreenshot", "height", (viewPoint.h+400)+"px");
                 }
                 else
                 {
-                    domStyle.set("lightCoverScreenshot", "height", ((viewPoint.w-30)*orignialRatio+400)+"px");
+                    domStyle.set("lightCoverScreenshot", "height", ((viewPoint.w-screenshotMargin)*orignialRatio+400)+"px");
                 }
 
-                var toolTipDivWidth = (viewPoint.w-30-viewPoint.w*0.10);
+                var toolTipDivWidth = (viewPoint.w-screenshotMargin-viewPoint.w*0.10);
                 domStyle.set("screenshotTooltipDetail", "width", toolTipDivWidth+"px");
 
                 if (eventsModel.cursor.circleX != null)
                 {
-                    var imageRatio = (viewPoint.w-30)/dom.byId('imgDetailScreenshot').naturalWidth;
-                    var imageRatioV = ((viewPoint.w-30)*orignialRatio)/dom.byId('imgDetailScreenshot').naturalHeight;
+                    var imageRatio = (viewPoint.w-screenshotMargin)/dom.byId('imgDetailScreenshot').naturalWidth;
+                    var imageRatioV = ((viewPoint.w-screenshotMargin)*orignialRatio)/dom.byId('imgDetailScreenshot').naturalHeight;
                     domStyle.set("screenshotAnchorDetail", {
                         top: eventsModel.cursor.circleY*imageRatioV+'px',
                         left: eventsModel.cursor.circleX*imageRatio+'px',
@@ -131,6 +132,8 @@ define([
                         tooltipWidget.hide();
                     }
                 }
+
+                showToastMsg('tap for details');
             }, 500);
         };
 
@@ -400,7 +403,24 @@ define([
                 domStyle.set(msgContainer, {
                     display:'none'
                 });
-            }, 2000);
+            }, 3000);
+
+            /*baseFX.fadeIn({
+                node: msgContainer,
+                start:0,
+                duration:750,
+                onEnd:function()
+                {
+                    window.setTimeout(function(){
+                        alert(baseFX+"3");
+                        baseFX.fadeOut({
+                            node: dom.byId('toastMsgContainer'),
+                            start:1,
+                            duration:750
+                        }).play();
+                    }, 3000);
+                }
+            }).play();*/
         };
 
         var showLoadingIndicator = function()
@@ -689,10 +709,10 @@ define([
                     goPreviousRecord();
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('discussDivDetail'), "click", function ()
+                /*_connectResults.push(connect.connect(dom.byId('discussDivDetail'), "click", function ()
                 {
                     showTextData();
-                }));
+                }));*/
 
                 _connectResults.push(connect.connect(dom.byId('addCommentImg'), "click", function ()
                 {
@@ -781,7 +801,7 @@ define([
 
                 }));
 
-                _connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
+                /*_connectResults.push(connect.connect(dom.byId('screenshotContainerDetail'), "touchstart", function (e)
                 {
                     if( e.touches.length == 1 )
                     {
@@ -802,6 +822,11 @@ define([
                             showTextData();
                         }
                     }
+                }));*/
+                _connectResults.push(connect.connect(dom.byId('imgDetailScreenshot'), "click", function (e)
+                {
+                    if (!textDataAreaShown)
+                        showTextData();
                 }));
 
                 _connectResults.push(connect.connect(dom.byId('textDataAreaContainer'), "touchstart", function (e)
