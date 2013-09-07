@@ -365,13 +365,15 @@ you can use the generic selector below, but it's slower:
 {
     position: absolute;
     background-color: #161616;
-    opacity: 0.7;
+    opacity: 0.8;
     padding: 6px;
     width: 230px;
     height: 20px;
     z-index: 5000;
     color: white;
     font-size: 14px;
+    text-align: center;
+    border-radius: 4px;
 }
 
 .noJump {
