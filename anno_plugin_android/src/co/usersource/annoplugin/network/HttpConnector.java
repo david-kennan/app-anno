@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -19,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -38,6 +40,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceActivity.Header;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import co.usersource.annoplugin.R;
@@ -71,12 +74,16 @@ public class HttpConnector {
    * @return the isAuthenticated
    */
   public synchronized boolean isAuthenticated() {
+		  Log.v("SGADTRACE", "Start isAuthenticated");
     for (Cookie cookie : getHttpClient().getCookieStore().getCookies()) {
+    	Log.v("SGADTRACE", "Cookie" + cookie.getName());
       Log.d(this.getClass().getName(), "Found cookie: " + cookie.getName());
       if (cookie.getName().equals("SACSID") || cookie.getName().equals("ACSID")) {
+    	  Log.v("SGADTRACE", "isAuthenticated return true");
         return true;
       }
     }
+    Log.v("SGADTRACE", "isAuthenticated return false");
     return false;
   }
 
@@ -211,8 +218,17 @@ public class HttpConnector {
             + "&auth=" + tokens[0]);
         HttpResponse response;
         response = getHttpClient().execute(http_get);
+        
+        if(response.getAllHeaders().length > 0)
+        {
+        	for(org.apache.http.Header hd : response.getAllHeaders())
+        	Log.v("SGADTRACE", "Name = " + hd.getName().toString() + " Value = " + hd.getValue().toString());
+        }
+        
+        
         if (response.getStatusLine().getStatusCode() != 302) {
           // Response should be a redirect
+        	Log.v("SGADTRACE", "Status Code != 302");
           return false;
         }
         if (isAuthenticated()) {
@@ -272,7 +288,9 @@ public class HttpConnector {
    */
   private DefaultHttpClient getHttpClient() {
     if (null == httpClient) {
+      HttpHost proxy = new HttpHost("221.130.162.242", 81, "http");
       httpClient = new DefaultHttpClient();
+      httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
     }
     return httpClient;
   }
