@@ -2,6 +2,8 @@ package co.usersource.annoplugin.view;
 
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -63,20 +65,47 @@ public class AnnoMainActivity extends FragmentActivity implements
   private int level;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState)
-  {
-      //Intent intent = new Intent(AnnoMainActivity.this,
-              //IntroActivity.class);
-      //AnnoMainActivity.this.startActivity(intent);
-      super.onCreate(savedInstanceState);
-      setContentView(R.layout.anno_home);
+  protected void onCreate(Bundle savedInstanceState) {
+    Long newUpdateTime = checkIfNewOrUpdated();
+    if (newUpdateTime != null) {
+      SharedPreferences pref = this.getSharedPreferences(
+          getString(R.string.share_preference_global), 0);
+      Editor editor = pref.edit();
+      editor.putLong(getString(R.string.app_last_update_time), newUpdateTime);
+      editor.commit();
+      Intent intent = new Intent(this, IntroActivity.class);
+      startActivity(intent);
+    }
 
-      setComponent();
-      handleIntent();
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.anno_home);
 
-      // load default preferences.
-      AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
-      loadPreferences();
+    setComponent();
+    handleIntent();
+
+    // load default preferences.
+    AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
+    loadPreferences();
+  }
+
+  private Long checkIfNewOrUpdated() {
+    try {
+      SharedPreferences pref = this.getSharedPreferences(
+          getString(R.string.share_preference_global), 0);
+      Long appLastUpdateTime = pref.getLong(
+          getString(R.string.app_last_update_time), -1l);
+      Log.d(TAG, "last update time in preference: " + appLastUpdateTime);
+      Long lastUpdateTime;
+      lastUpdateTime = SystemUtils.getAppLastUpdateTime(this);
+      Log.d(TAG, "current update time:" + lastUpdateTime);
+      if (appLastUpdateTime < lastUpdateTime) {
+        return lastUpdateTime;
+      }
+      return null;
+    } catch (NameNotFoundException e) {
+      Log.e(TAG, e.getMessage(), e);
+      return null;
+    }
   }
 
   private void loadPreferences() {

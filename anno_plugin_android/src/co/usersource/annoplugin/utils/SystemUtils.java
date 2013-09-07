@@ -159,4 +159,43 @@ public final class SystemUtils {
     NetworkInfo networkInfo = cm.getActiveNetworkInfo();
     return networkInfo != null && networkInfo.isConnectedOrConnecting();
   }
+
+  /**
+   * Get the time when app was first installed.
+   * 
+   * @param activity
+   * @return
+   * @throws NameNotFoundException
+   */
+  public static Long getAppInstallTime(Activity activity)
+      throws NameNotFoundException {
+    PackageManager pm = activity.getPackageManager();
+    PackageInfo pi = pm.getPackageInfo(activity.getPackageName(), 0);
+    return pi.firstInstallTime;
+  }
+
+  /**
+   * Get the time when app was last modified-update.
+   * 
+   * @param activity
+   * @return
+   * @throws NameNotFoundException
+   */
+  public static Long getAppUpdateTime(Activity activity)
+      throws NameNotFoundException {
+    PackageManager pm = activity.getPackageManager();
+    ApplicationInfo ai = pm.getApplicationInfo(activity.getPackageName(), 0);
+    File apkFile = new File(ai.sourceDir);
+    return apkFile.exists() ? apkFile.lastModified() : null;
+  }
+
+  public static Long getAppLastUpdateTime(Activity activity)
+      throws NameNotFoundException {
+    Long updateTime = getAppUpdateTime(activity);
+    if (updateTime != null) {
+      return updateTime;
+    }
+    Long installTime = getAppInstallTime(activity);
+    return installTime;
+  }
 }

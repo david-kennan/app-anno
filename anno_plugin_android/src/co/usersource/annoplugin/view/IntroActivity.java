@@ -1,24 +1,30 @@
 package co.usersource.annoplugin.view;
 
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import co.usersource.annoplugin.AnnoPlugin;
 import org.apache.cordova.DroidGap;
-import android.gesture.GestureOverlayView;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
 
+public class IntroActivity extends DroidGap {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    super.init();
 
-public class IntroActivity extends DroidGap
-{
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        super.init();
+    this.appView.setOnKeyListener(new View.OnKeyListener() {
 
-        super.loadUrl("file:///android_asset/www/pages/intro/main.html");
-    }
-
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+          if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // Do Stuff Here
+            return true;
+          }
+          return onKeyUp(keyCode, event);
+        }
+        return onKeyDown(keyCode, event);
+      }
+    });
+    super.loadUrl("file:///android_asset/www/pages/intro/main.html");
+  }
 }
