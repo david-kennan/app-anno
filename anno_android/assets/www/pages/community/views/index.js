@@ -87,7 +87,7 @@ define([
                 },
                 "CordovaHttpService",
                 "get_anno_list",
-                [{offset: poffset||0, limit: limit}]
+                [{offset: eventsModel.model.length||0, limit: limit}]
 
             );
         };
