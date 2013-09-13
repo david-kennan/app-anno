@@ -26,9 +26,7 @@ class FeedbackComment(AnnoSyncEntity):
     JSON_ANNO_TYPE = "anno_type"
     JSON_MODEL = "model"
     
-    '''
-    classdocs
-    '''
+     
     screenshot_key = db.StringProperty()
     comment = db.StringProperty()
     x = db.StringProperty()
@@ -55,7 +53,9 @@ class FeedbackComment(AnnoSyncEntity):
         for name, value in data.items():
             if name == self.JSON_IMAGE:
                 setattr(self, name, str(value))
-            else:
+            elif name == "user_id":
+                setattr(self, name, db.Key.from_path('Users', int(value)))
+            else:    
                 setattr(self, name, value)
         self.put()
         
@@ -91,7 +91,6 @@ class FeedbackComment(AnnoSyncEntity):
     def getCommentsAfterDate(self, date):
         model = self.all()
         model.filter("updateTimestamp > ", datetime.strptime(date, "%Y-%m-%d %H:%M:%S:%f"))
-        model.filter("userId = ", self.userId)
         result = []
         item = {}
         

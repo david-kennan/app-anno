@@ -99,9 +99,9 @@
             android:enabled="true"
             android:exported="true"
             android:multiprocess="true" />
-
+       
         <service
-            android:name="co.usersource.annoplugin.sync.SyncService"
+            android:name="co.usersource.annoplugin.sync.AnnoSyncService"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
@@ -111,6 +111,17 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/annosyncadapter" />
         </service>
+        
+        
+        <service
+            android:name="co.usersource.annoplugin.sync.AnnoAuthenticatorService">
+        	<intent-filter>
+            	<action android:name="android.accounts.AccountAuthenticator"/>
+        	</intent-filter>
+        	<meta-data
+            	android:name="android.accounts.AccountAuthenticator"
+            	android:resource="@xml/authenticator" />
+    	</service>
     </application>
 
 </manifest>

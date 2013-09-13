@@ -72,6 +72,21 @@ public class DatabaseUpdater {
         selection, null, null);
     return result;
   }
+  
+  public Cursor getUsers()
+  {
+	  Cursor result = dbContext.query(AnnoContentProvider.USERS_PATH_URI, null, 
+			  null, null, null);
+	  return result;
+  }
+  
+  public void createNewUser(ContentValues record)
+  {
+	  if(dbContext.insert(AnnoContentProvider.USERS_PATH_URI, record) == null){
+		  Log.v(TAG, "Can't insert a new user" + record.toString());
+	  }
+  
+  }
 
   public void createNewRecord(ContentValues record) {
     if (dbContext.insert(AnnoContentProvider.COMMENT_PATH_URI, record) == null) {

@@ -88,13 +88,13 @@ class Community(webapp2.RequestHandler):
                 anno["OSVersion"] = item.os_version
                 
                 commentItem[Community.FOLLOWUP_KEY] = str(item.key())
-                commentItem["author"] = item.user.nickname()
+                commentItem["author"] = item.user_id.user_name
                 commentItem["comment"] = item.comment
                 comments.append(commentItem.copy())
                                
                 for followup in item.followups.order('-updateTimestamp').run():
                     commentItem[Community.FOLLOWUP_KEY] = str(followup.key())
-                    commentItem["author"] = followup.user.nickname()
+                    commentItem["author"] = followup.user_id.user_name
                     commentItem["comment"] = followup.comment
                     comments.append(commentItem.copy())
                 
@@ -120,14 +120,14 @@ class Community(webapp2.RequestHandler):
             shortItem["id"] = str(item.key())
             shortItem["annoText"] = item.comment
             shortItem["app"] = item.app_name
-            shortItem["author"] = item.user.nickname()
+            shortItem["author"] = item.user_id.user_name
             annos.append(shortItem.copy())
         result["annos"] = annos
         
         return result
     
     def updateAppName(self, anno, name):
-        com = FeedbackComment(user = users.get_current_user(), userId = users.get_current_user().user_id())
+        com = FeedbackComment()
         return com.setAppName(anno, name)
     
     def proceedJson(self, data):
@@ -135,29 +135,26 @@ class Community(webapp2.RequestHandler):
         
         if data[Community.TYPE] == Community.FOLLOWUP_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                result = self.deleteByType(Community.FOLLOWUP_TYPE, data[Community.FEEDBACK_KEY])
+                result = self.deleteByType(Community.FOLLOWUP_TYPE, data)
             else:
-                followUp = FollowUp(user = users.get_current_user(), 
-                                    userId = users.get_current_user().user_id())
+                followUp = FollowUp()
                 result = followUp.AddNewFollowUp(data)
         
         elif data[Community.TYPE] == Community.FLAG_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                result = self.deleteByType(Community.FLAG_TYPE, data[Community.FEEDBACK_KEY])
+                result = self.deleteByType(Community.FLAG_TYPE, data)
             else:    
-                flag = Flags(user = users.get_current_user(), 
-                             userId = users.get_current_user().user_id())
+                flag = Flags()
                 result = flag.AddNewFlag(data)
         
         elif data[Community.TYPE] == Community.VOTE_TYPE:
             if data[Community.ACTION] == Community.DELETE_ACTION:
-                result = self.deleteByType(Community.VOTE_TYPE, data[Community.FEEDBACK_KEY])
+                result = self.deleteByType(Community.VOTE_TYPE, data)
             else:
-                vote = Votes(user = users.get_current_user(), 
-                         userId = users.get_current_user().user_id())
+                vote = Votes()
                 result = vote.AddNewVote(data)
         else:
-            result = self.getCountByType(data[Community.TYPE], data[Community.FEEDBACK_KEY])
+            result = self.getCountByType(data[Community.TYPE], data)
             
         return result
     
@@ -173,18 +170,18 @@ class Community(webapp2.RequestHandler):
         return result
     
     
-    def deleteByType(self, deleteType, key):
+    def deleteByType(self, deleteType, data):
         result = {}
         
         try:
-            parent = db.get(key)
+            parent = db.get(data[Community.FEEDBACK_KEY])
             if parent != None:
                 delRec = None
                 if deleteType == Community.FLAG_TYPE:
-                    parent.votes.filter("user = ", users.get_current_user())
+                    parent.votes.filter("user = ", data["user_id"])
                     delRec = parent.flags.get()
                 elif deleteType == Community.VOTE_TYPE:
-                    parent.votes.filter("user = ", users.get_current_user())
+                    parent.votes.filter("user = ", data["user_id"])
                     delRec = parent.votes.get()
                 elif deleteType == Community.FOLLOWUP_TYPE:
                     delRec = parent

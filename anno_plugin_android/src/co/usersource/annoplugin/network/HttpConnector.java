@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -20,7 +19,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
@@ -40,7 +38,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceActivity.Header;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import co.usersource.annoplugin.R;
@@ -57,8 +54,8 @@ public class HttpConnector {
   /** Timeouts for httpClient */
   public static final int REGISTRATION_TIMEOUT = 30 * 1000; // ms
   /** Base URL for Anno services */
-  public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
-  //public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest";
+  //public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
+  public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest";
   //public static final String BASE_URL = "https://annoserver.appspot.com";
 
   private DefaultHttpClient httpClient;
@@ -288,9 +285,7 @@ public class HttpConnector {
    */
   private DefaultHttpClient getHttpClient() {
     if (null == httpClient) {
-      HttpHost proxy = new HttpHost("221.130.162.242", 81, "http");
       httpClient = new DefaultHttpClient();
-      httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
     }
     return httpClient;
   }

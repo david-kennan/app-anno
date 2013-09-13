@@ -41,7 +41,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
 
   public AnnoHttpServiceImpl(Context context) {
     this.context = context;
-    httpConnector = new HttpConnector();
+    httpConnector = new HttpConnector(context);
   }
 
   /**

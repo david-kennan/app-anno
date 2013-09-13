@@ -26,6 +26,7 @@ import co.usersource.annoplugin.AnnoPlugin;
 import co.usersource.annoplugin.R;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
+import co.usersource.annoplugin.sync.AnnoSyncAdapter;
 import co.usersource.annoplugin.utils.PluginUtils;
 import co.usersource.annoplugin.utils.SystemUtils;
 
@@ -66,6 +67,8 @@ public class AnnoMainActivity extends FragmentActivity implements
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+	
+	AnnoSyncAdapter.createSyncAccount(this);
     Long newUpdateTime = checkIfNewOrUpdated();
     if (newUpdateTime != null) {
       SharedPreferences pref = this.getSharedPreferences(
@@ -87,7 +90,7 @@ public class AnnoMainActivity extends FragmentActivity implements
     AnnoPlugin.setEnableGesture(this, R.id.gestures, true);
     loadPreferences();
   }
-
+  
   private Long checkIfNewOrUpdated() {
     try {
       SharedPreferences pref = this.getSharedPreferences(

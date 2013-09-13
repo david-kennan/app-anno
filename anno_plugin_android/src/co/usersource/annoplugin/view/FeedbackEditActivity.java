@@ -27,7 +27,7 @@ import co.usersource.annoplugin.datastore.FileImageManage;
 import co.usersource.annoplugin.datastore.ImageManage;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import co.usersource.annoplugin.model.AnnoContentProvider;
-import co.usersource.annoplugin.sync.SyncAdapter;
+import co.usersource.annoplugin.sync.AnnoSyncAdapter;
 import co.usersource.annoplugin.utils.AppConfig;
 import co.usersource.annoplugin.utils.ImageUtils;
 import co.usersource.annoplugin.utils.PluginUtils;
@@ -253,7 +253,7 @@ public class FeedbackEditActivity extends Activity {
         activityRef.get().finish();
 
         // if insert comment successfully, send it to GAE server asynchronizely.
-        SyncAdapter.requestSync(activityRef.get().getApplicationContext());
+        AnnoSyncAdapter.requestSync(activityRef.get().getApplicationContext());
       }
     }
 

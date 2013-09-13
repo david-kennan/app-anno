@@ -1,28 +1,16 @@
 package co.usersource.annoplugin.sync;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
 import android.accounts.Account;
-import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 import co.usersource.annoplugin.model.AnnoContentProvider;
 import co.usersource.annoplugin.network.HttpConnector;
 import co.usersource.annoplugin.network.IHttpConnectorAuthHandler;
-import co.usersource.annoplugin.network.IHttpRequestHandler;
 import co.usersource.annoplugin.utils.AccountUtils;
 import co.usersource.annoplugin.utils.SystemUtils;
 
@@ -33,21 +21,15 @@ import co.usersource.annoplugin.utils.SystemUtils;
  * @author topcircler
  * 
  */
-public class SyncAdapter extends AbstractThreadedSyncAdapter {
-  public static final String JSON_REQUEST_PARAM_NAME = "jsonData";
-
-  private static final String TAG = "AnnoSyncAdapter";
-
-  private HttpConnector httpConnector;
-  private RequestCreater request;
-  private DatabaseUpdater db;
-
+public class SyncAdapter extends BaseSyncAdapter {
+	
+   private static final String TAG = "SyncAdapter";
+  
   /**
    * {@inheritDoc}
    */
   public SyncAdapter(Context context, boolean autoInitialize) {
     super(context, autoInitialize);
-    db = new DatabaseUpdater(context);
   }
 
   public static void requestSync(Context context) {
@@ -78,10 +60,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
   @Override
   public void onPerformSync(Account account, Bundle extras, String authority,
       ContentProviderClient provider, SyncResult syncResult) {
-    HttpConnector httpConnector = getHttpConnector();
+   
+	HttpConnector httpConnector = getHttpConnector();
     if (httpConnector.isAuthenticated()) {
       Log.d(TAG, "httpConnector.isAuthenticated()==true. Perform sync.");
-      performSyncRoutines();
+      performSyncRoutines(null);
     } else {
       Log.d(TAG, "httpConnector.isAuthenticated()==false. Perform auth.");
       httpConnector
@@ -89,7 +72,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             public void onAuthSuccess() {
               Log.i(TAG, "Synchronize - Authentication succeeded.");
-              performSyncRoutines();
+              performSyncRoutines(null);
             }
 
             public void onAuthFail() {
@@ -100,98 +83,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
           });
       httpConnector.authenticate(getContext(), account);
     }
-  }
-
-  private void performSyncRoutines() {
-    Log.i(TAG, "Start synchronization");
-    try {
-      request = getLocalData();
-
-      final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-      Log.i(TAG, "Send generateKeys request.");
-      params.add(new BasicNameValuePair(SyncAdapter.JSON_REQUEST_PARAM_NAME,
-          request.getKeysRequest().toString()));
-      getHttpConnector().sendRequest("/sync", params,
-          new IHttpRequestHandler() {
-
-            public void onRequest(JSONObject response) {
-              updateLocalKeys(response);
-            }
-          });
-
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage(), e);
-    }
-  }
-
-  private void updateLocalKeys(JSONObject data) {
-    Log.i(TAG, "Update local data with server keys.");
-    Iterator<Map.Entry<String, String>> items = request.addKeys(data)
-        .entrySet().iterator();
-    while (items.hasNext()) {
-      Map.Entry<String, String> item = items.next();
-      String key = (String) item.getKey();
-      String value = (String) item.getValue();
-      Log.d(TAG, "Update local data with key:(" + key + "," + value + ")");
-      db.setRecordKey(key, value);
-    }
-    sendItems();
-  }
-
-  public void sendItems() {
-    final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-    JSONObject req = request.getNext();
-    try {
-      if (req != null) {
-        String reqString = req.toString();
-        Log.i(TAG, "Send comment.");
-        Log.d(TAG, "request data: " + reqString);
-        params.add(new BasicNameValuePair(SyncAdapter.JSON_REQUEST_PARAM_NAME,
-            req.toString()));
-        getHttpConnector().sendRequest("/sync", params,
-            new IHttpRequestHandler() {
-              public void onRequest(JSONObject response) {
-                if (response != null) {
-                  Log.d(TAG, "Send Comment response: " + response.toString());
-                  db.updateLastSyncTime(System.currentTimeMillis());
-                }
-                sendItems();
-              }
-            });
-      }
-    } catch (IOException e) {
-      Log.e(TAG, e.getMessage(), e);
-    }
-  }
-
-  /**
-   * This function reads information from local database.
-   * 
-   * @return local data in json format
-   */
-  private RequestCreater getLocalData() {
-    Log.v(TAG, "Populate local data that not synched into request.");
-    RequestCreater request = new RequestCreater(getContext());
-    Long lastUpdateDate = db.getLastSyncTime();
-    Cursor localData = db.getItemsAfterDate(lastUpdateDate);
-
-    if (null != localData) {
-      for (boolean isDataExist = localData.moveToFirst(); isDataExist; isDataExist = localData
-          .moveToNext()) {
-        request.addObject(localData);
-      }
-    }
-    return request;
-  }
-
-  /**
-   * @return the httpConnector
-   */
-  public HttpConnector getHttpConnector() {
-    if (httpConnector == null) {
-      httpConnector = new HttpConnector();
-    }
-    return httpConnector;
   }
 
 }

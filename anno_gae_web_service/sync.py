@@ -7,7 +7,6 @@ import webapp2
 import logging
 import json
 from model.FeedbackComment import FeedbackComment
-from google.appengine.api import users
 from datetime import datetime
 from utils.AnnoJsonEncoder import AnnoJsonEncoder
 
@@ -53,12 +52,12 @@ class AnnoSync(webapp2.RequestHandler):
         return answer
     
     def generateKeys(self, data):
-        comment = FeedbackComment(user = users.get_current_user(), userId = users.get_current_user().user_id())
+        comment = FeedbackComment()
         data[AnnoSync.JSON_OBJECTS_KEYS] = comment.generateKeys(data[AnnoSync.JSON_KEYS_COUNT])
         
         
     def updateData(self, data):
-        comment = FeedbackComment(user = users.get_current_user(), userId = users.get_current_user().user_id())
+        comment = FeedbackComment()
         comment.createComment(data[AnnoSync.JSON_UPDATED_OBJECT])
         data[AnnoSync.JSON_UPDATED_OBJECT] = []
 
@@ -70,7 +69,7 @@ class AnnoSync(webapp2.RequestHandler):
        
             
     def getServerObjects(self, data):
-        comment = FeedbackComment(user = users.get_current_user(), userId = users.get_current_user().user_id())
+        comment = FeedbackComment()
         return comment.getCommentsAfterDate(data[AnnoSync.JSON_TIMESTAMP])
         
     

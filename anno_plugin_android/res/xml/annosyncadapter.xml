@@ -5,6 +5,7 @@
 
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:contentAuthority="co.usersource.anno.provider"
-    android:accountType="com.google"
+    android:accountType="usersource.io"
     android:isAlwaysSyncable="true"
+    android:userVisible = "true"
 />

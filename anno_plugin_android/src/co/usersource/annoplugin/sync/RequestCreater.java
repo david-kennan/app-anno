@@ -38,7 +38,8 @@ public class RequestCreater {
   public static final String JSON_TIME_STAMP = "lastUpdateDate";
   public static final String JSON_OBJECT_KEY = "object_key";
   public static final String JSON_KEYS_COUNT = "keys_count";
-
+  public static final String JSON_USER_ID = "user_id";
+  
   public static final String JSON_REQUEST_TYPE = "request_type";
   public static final String JSON_REQUEST_TYPE_KEYS = "generateKeys";
   public static final String JSON_REQUEST_TYPE_UPDATE = "updateData";
@@ -47,6 +48,7 @@ public class RequestCreater {
   public static final String JSON_IMAGE = "image";
 
   public static final String JSON_OBJECTS_KEYS = "objectsKeys";
+  
 
   int keysCount;
   int currentItem;
@@ -56,6 +58,7 @@ public class RequestCreater {
   JSONArray objects;
 
   String requestTimestamp;
+  String userID;
 
   Context context;
 
@@ -132,11 +135,21 @@ public class RequestCreater {
     }
     return result;
   }
+  
+  public void setUserID(String id)
+  {
+	  Log.v("SGADTRACE", "set user id" + id);
+	  userID = id;
+  }
 
   public JSONObject getRequest() {
     try {
       request.put(JSON_UPDATED_OBJECTS, objects);
       request.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
+      if(!userID.isEmpty())
+      {
+    	  request.put(JSON_USER_ID, userID);
+      }
     } catch (JSONException e) {
       Log.e(TAG, e.getMessage(), e);
     }
@@ -171,6 +184,10 @@ public class RequestCreater {
         // long imageSize = imageManager.imageSize(imageKey);
         item.put(JSON_IMAGE, imageManager.compressImage(imageKey));
 
+        if(!userID.isEmpty())
+        {
+        	item.put(JSON_USER_ID, userID);
+        }
         result.put(JSON_UPDATED_OBJECTS, item);
         result.put(JSON_REQUEST_TYPE, JSON_REQUEST_TYPE_UPDATE);
         Log.d(TAG, "getNext:" + result.toString(2));

@@ -41,8 +41,8 @@ public final class AccountUtils {
     AccountManager accountManager = AccountManager.get(context);
     String type = accountType;
     if (type == null || type.isEmpty()) {
-      type = Constants.ACCOUNT_TYPE_GOOGLE;
+      type = Constants.ACCOUNT_TYPE_USERSOURCE;
     }
-    return accountManager.getAccountsByType(Constants.ACCOUNT_TYPE_GOOGLE);
+    return accountManager.getAccountsByType(type);
   }
 }

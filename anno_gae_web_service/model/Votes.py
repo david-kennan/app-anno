@@ -20,6 +20,7 @@ class Votes(AnnoSyncEntity):
             self.feedback_key = db.get(data["feedback_key"])
             if self.feedback_key != None:
                 result["success"] = "true"
+                self.user_id = db.Key.from_path('Users', int(data["user_id"]))
                 self.put()
             else:
                 result["success"] = "false"

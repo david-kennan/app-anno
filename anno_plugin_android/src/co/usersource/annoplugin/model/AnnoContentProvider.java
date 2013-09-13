@@ -12,6 +12,7 @@ import android.database.SQLException;
 import android.net.Uri;
 import co.usersource.annoplugin.datastore.AnnoSQLiteOpenHelper;
 import co.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
+import co.usersource.annoplugin.datastore.TableUsers;
 import co.usersource.annoplugin.datastore.UnknownUriException;
 
 /**
@@ -24,12 +25,19 @@ public class AnnoContentProvider extends ContentProvider {
 
   public static final String AUTHORITY = "co.usersource.anno.provider";
   public static final String COMMENT_PATH = TableCommentFeedbackAdapter.TABLE_NAME;
+  public static final String USERS_PATH = TableUsers.TABLE_NAME;
+  
   public static final Uri COMMENT_PATH_URI = Uri.parse("content://" + AUTHORITY
       + "/" + COMMENT_PATH);
+  public static final Uri USERS_PATH_URI = Uri.parse("content://" + AUTHORITY + "/" + USERS_PATH);
+  
   /** code that represents operation on one comment. */
   private static final int SINGLE_COMMENT_CODE = 1;
   /** code that represents operation on all comments. */
   private static final int COMMENT_CODE = 2;
+  
+  /**code that represents operation on all users*/
+  private static final int USERS_CODE = 3;
 
   /* MIME type definitions */
   private static final String TABLE_MIME_TYPE = "vnd";
@@ -44,6 +52,7 @@ public class AnnoContentProvider extends ContentProvider {
   static {
     URI_MATCHER.addURI(AUTHORITY, COMMENT_PATH + "/#", SINGLE_COMMENT_CODE);
     URI_MATCHER.addURI(AUTHORITY, COMMENT_PATH, COMMENT_CODE);
+    URI_MATCHER.addURI(AUTHORITY, USERS_PATH, USERS_CODE);
   }
 
   @Override
@@ -88,6 +97,13 @@ public class AnnoContentProvider extends ContentProvider {
        */
       throw new SQLException(String.format("insert comment(uri:%s) failed.",
           uri.toString()));
+    case USERS_CODE:
+    	long id = annoSQLiteOpenHelper.getTableUsersAdapter().insert(values);
+    	if(id != -1){
+    		return ContentUris.withAppendedId(USERS_PATH_URI, id);
+    	}
+    	throw new SQLException(String.format("insert user(uri:%s) failed.",
+    	          uri.toString()));
     default:
       handleUnknownUri(uri, code);
     }
@@ -107,6 +123,9 @@ public class AnnoContentProvider extends ContentProvider {
       String selectionExpr = TableCommentFeedbackAdapter.COL_ID + " = ?";
       return annoSQLiteOpenHelper.getTableCommentFeedbackAdapter().query(
           projection, selectionExpr, args, sortOrder);
+    case USERS_CODE:
+    	return annoSQLiteOpenHelper.getTableUsersAdapter().query(
+    			projection, selection, selectionArgs, sortOrder); 
     default:
       handleUnknownUri(uri, code);
     }

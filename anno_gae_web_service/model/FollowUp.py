@@ -22,6 +22,7 @@ class FollowUp(AnnoSyncEntity):
             if self.Feedback_key != None:
                 result["success"] = "true"
                 self.comment = data["comment"]
+                self.user_id = db.Key.from_path('Users', int(data["user_id"]))
                 self.put()
             else:
                 result["success"] = "false"
