@@ -64,6 +64,10 @@ public class HttpConnector {
   private List<NameValuePair> params;
   private IHttpRequestHandler httpRequestHandler;
 
+  
+  public HttpConnector(Context context) {
+	  applicationContext = context;
+  }
   /**
    * Check whether current instance of the connector has required cookies for
    * authentication.
