@@ -138,7 +138,6 @@ public class RequestCreater {
   
   public void setUserID(String id)
   {
-	  Log.v("SGADTRACE", "set user id" + id);
 	  userID = id;
   }
 

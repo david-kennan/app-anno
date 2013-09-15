@@ -57,7 +57,7 @@ public class HttpConnector {
   //public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com";
   public static final String BASE_URL = "http://ec2-54-213-161-127.us-west-2.compute.amazonaws.com/annotest";
   //public static final String BASE_URL = "https://annoserver.appspot.com";
-
+  
   private DefaultHttpClient httpClient;
   private Context applicationContext;
   private IHttpConnectorAuthHandler httpConnectorAuthHandler;
@@ -75,12 +75,9 @@ public class HttpConnector {
    * @return the isAuthenticated
    */
   public synchronized boolean isAuthenticated() {
-		  Log.v("SGADTRACE", "Start isAuthenticated");
     for (Cookie cookie : getHttpClient().getCookieStore().getCookies()) {
-    	Log.v("SGADTRACE", "Cookie" + cookie.getName());
       Log.d(this.getClass().getName(), "Found cookie: " + cookie.getName());
       if (cookie.getName().equals("SACSID") || cookie.getName().equals("ACSID")) {
-    	  Log.v("SGADTRACE", "isAuthenticated return true");
         return true;
       }
     }
@@ -220,16 +217,8 @@ public class HttpConnector {
         HttpResponse response;
         response = getHttpClient().execute(http_get);
         
-        if(response.getAllHeaders().length > 0)
-        {
-        	for(org.apache.http.Header hd : response.getAllHeaders())
-        	Log.v("SGADTRACE", "Name = " + hd.getName().toString() + " Value = " + hd.getValue().toString());
-        }
-        
-        
         if (response.getStatusLine().getStatusCode() != 302) {
           // Response should be a redirect
-        	Log.v("SGADTRACE", "Status Code != 302");
           return false;
         }
         if (isAuthenticated()) {

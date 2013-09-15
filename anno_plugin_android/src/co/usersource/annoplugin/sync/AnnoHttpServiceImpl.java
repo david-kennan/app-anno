@@ -38,10 +38,12 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
   private HttpConnector httpConnector;
   private Context context;
   private Account account;
+  private UsersManager mUser;
 
   public AnnoHttpServiceImpl(Context context) {
     this.context = context;
     httpConnector = new HttpConnector(context);
+    mUser = new UsersManager(context);
   }
 
   /**
@@ -73,34 +75,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
       handler.handleError(e);
       return;
     }
-    if (account == null) {
-      Account[] accounts = AccountUtils.getAllAccounts(context, null);
-      if (accounts == null || accounts.length == 0) {
-        Log.i(TAG, "No available google account, won't synchronize.");
-        Exception e = new Exception("No available google account.");
-        handler.handleError(e);
-        return;
-      }
-      account = accounts[0];
-    }
-
-    if (httpConnector.isAuthenticated()) {
-      execution.execute(input);
-    } else {
-      httpConnector
-          .setHttpConnectorAuthHandler(new IHttpConnectorAuthHandler() {
-
-            public void onAuthSuccess() {
-              execution.execute(input);
-            }
-
-            public void onAuthFail() {
-              Toast.makeText(context, "Authentication failed.",
-                  Toast.LENGTH_LONG).show();
-            }
-          });
-      httpConnector.authenticate(context, account);
-    }
+    execution.execute(input);
   }
 
   @Override
@@ -234,6 +209,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("action", "add");
           jsonData.put("feedback_key", annoId);
           jsonData.put("comment", comment);
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -268,6 +244,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("type", "Flag");
           jsonData.put("action", "add");
           jsonData.put("feedback_key", annoId);
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -301,6 +278,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("type", "Vote");
           jsonData.put("action", "add");
           jsonData.put("feedback_key", annoId);
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -333,6 +311,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           JSONObject jsonData = new JSONObject();
           jsonData.put("feedback_key", annoId);
           jsonData.put("type", "getVotesCount");
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -365,6 +344,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           JSONObject jsonData = new JSONObject();
           jsonData.put("feedback_key", annoId);
           jsonData.put("type", "getFlagsCount");
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -398,6 +378,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("feedback_key", annoId);
           jsonData.put("type", "Flag");
           jsonData.put("action", "delete");
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -431,6 +412,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("feedback_key", annoId);
           jsonData.put("type", "Vote");
           jsonData.put("action", "delete");
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params
@@ -465,6 +447,7 @@ public class AnnoHttpServiceImpl implements AnnoHttpService {
           jsonData.put("followup_key", followupId);
           jsonData.put("type", "followup");
           jsonData.put("action", "delete");
+          jsonData.put("user_id", mUser.getUserID());
 
           final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
           params

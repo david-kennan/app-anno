@@ -28,10 +28,13 @@ import android.util.Log;
 
 public class AnnoSyncAdapter extends BaseSyncAdapter {
 	
+	private UsersManager mUser;
 	private static final String TAG = "AnnoSyncAdapter";
 
 	public AnnoSyncAdapter(Context context, boolean autoInitialize) {
 		super(context, autoInitialize);
+		
+		mUser = new UsersManager(context);
 	}
 
 	public AnnoSyncAdapter(Context context, boolean autoInitialize,
@@ -43,14 +46,14 @@ public class AnnoSyncAdapter extends BaseSyncAdapter {
 	public void onPerformSync(Account arg0, Bundle arg1, String arg2,
 			ContentProviderClient arg3, SyncResult arg4) {
 		
-		Cursor user = db.getUsers();
-		if( user != null && user.getCount() == 0 )
+		String userId = mUser.getUserID();
+		if( userId == null)
 		{
 			CreateUser();
 		}
-		else{
-			user.moveToFirst();
-			performSyncRoutines(user.getString(user.getColumnIndex(TableUsers.COL_USER_ID)));
+		else
+		{
+			performSyncRoutines(userId);
 		}
 	}
 	
@@ -69,16 +72,14 @@ public class AnnoSyncAdapter extends BaseSyncAdapter {
 	              public void onRequest(JSONObject response) {
 	            	  try {
 	            		  if (response != null) {
-	            			  Log.v("SGADTRACE", response.toString());
 	            			  ContentValues user = new ContentValues();
 	                		  user.put(TableUsers.COL_USER_ID, response.getString("user_id"));
 							  user.put(TableUsers.COL_DISPLAY_ID, response.getString("user_name"));
-							  db.createNewUser(user);					
+							  mUser.createNewUser(user); 					
 							  performSyncRoutines(response.getString("user_id"));
 	            		  }
     		  
 	            	  } catch (JSONException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 	            	  }
 	              }
@@ -116,6 +117,7 @@ public class AnnoSyncAdapter extends BaseSyncAdapter {
 		Account result = null;
 		Account[] accounts = AccountUtils.getAllAccounts(context, Constants.ACCOUNT_TYPE_USERSOURCE);
 	    if (accounts == null || accounts.length == 0) {
+	    	
 	    	Log.i(TAG, "No available anno account, create a new.");
 	    	result = new Account(Constants.ACCOUNT, Constants.ACCOUNT_TYPE_USERSOURCE);
 		    AccountManager manager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
