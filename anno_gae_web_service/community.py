@@ -8,7 +8,6 @@ import json
 from google.appengine.ext import db
 from utils.AnnoJsonEncoder import AnnoJsonEncoder
 from model.FeedbackComment import FeedbackComment
-from google.appengine.api import users
 from model.FollowUp import FollowUp
 from model.Flags import Flags
 from model.Votes import Votes
@@ -86,11 +85,6 @@ class Community(webapp2.RequestHandler):
                 anno["circleY"] = item.y
                 anno["deviceModel"] = item.model 
                 anno["OSVersion"] = item.os_version
-                
-                commentItem[Community.FOLLOWUP_KEY] = str(item.key())
-                commentItem["author"] = item.user_id.user_name
-                commentItem["comment"] = item.comment
-                comments.append(commentItem.copy())
                                
                 for followup in item.followups.order('-updateTimestamp').run():
                     commentItem[Community.FOLLOWUP_KEY] = str(followup.key())
