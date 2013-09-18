@@ -70,7 +70,9 @@ public class AnnoMainActivity extends FragmentActivity implements
 
     AnnoSyncAdapter.createSyncAccount(this);
     Long newUpdateTime = checkIfNewOrUpdated();
-    if (newUpdateTime != null) {
+    if (newUpdateTime != null)
+    {
+        AnnoPlugin.FIRST_LAUNCH = true;
       SharedPreferences pref = this.getSharedPreferences(
           getString(R.string.share_preference_global), 0);
       Editor editor = pref.edit();
