@@ -52,7 +52,7 @@
     <plugin name="Echo" value="org.apache.cordova.Echo" />
     <plugin name="Globalization" value="org.apache.cordova.Globalization"/>
     <!-- anno cordova plugin -->
-    <plugin name="CordovaHttpService" value="co.usersource.annoplugin.view.CordovaHttpService" />
+    <plugin name="CordovaHttpService" value="io.usersource.annoplugin.view.CordovaHttpService" />
 </plugins>
 </cordova>
 

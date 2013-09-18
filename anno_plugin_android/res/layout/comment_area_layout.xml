@@ -3,7 +3,7 @@
     xmlns:anno="http://schemas.android.com/apk/res-auto"
     anno:arrow_boundary="20dp" >
 
-    <co.usersource.annoplugin.view.custom.CircleArrow
+    <io.usersource.annoplugin.view.custom.CircleArrow
         android:id="@+id/circleArrow"
         android:layout_width="match_parent"
         android:layout_height="@dimen/comment_indicate_height"
@@ -39,7 +39,7 @@
         android:layout_marginLeft="@dimen/comment_area_marginLeftRight"
         android:layout_marginRight="@dimen/comment_area_marginLeftRight" >
 
-        <co.usersource.annoplugin.view.custom.EditTextLayout
+        <io.usersource.annoplugin.view.custom.EditTextLayout
             android:id="@+id/inputArea"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
                 android:padding="8dp"
                 android:textColor="@android:color/black"
                 android:textColorHint="@color/text_hint_color" />
-        </co.usersource.annoplugin.view.custom.EditTextLayout>
+        </io.usersource.annoplugin.view.custom.EditTextLayout>
 
         <Button
             android:id="@+id/btnComment"

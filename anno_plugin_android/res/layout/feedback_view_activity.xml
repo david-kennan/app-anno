@@ -25,13 +25,13 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/content_margin" >
 
-                <co.usersource.annoplugin.view.custom.CommentAreaLayout
+                <io.usersource.annoplugin.view.custom.CommentAreaLayout
                     android:id="@+id/viewCommentArea"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/comment_area_marginTop_default"
                     anno:arrow_boundary="20dp" >
-                </co.usersource.annoplugin.view.custom.CommentAreaLayout>
+                </io.usersource.annoplugin.view.custom.CommentAreaLayout>
             </RelativeLayout>
         </RelativeLayout>
     </android.gesture.GestureOverlayView>

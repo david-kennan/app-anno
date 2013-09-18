@@ -7,11 +7,11 @@
     anno:border_empty_end="140dp"
     anno:border_empty_start="100dp" >
 
-    <co.usersource.anno.view.custom.CircleArrow
+    <io.usersource.anno.view.custom.CircleArrow
         android:layout_width="40dp"
         android:layout_height="60dp" />
 
-    <co.usersource.anno.view.custom.EditTextLayout
+    <io.usersource.anno.view.custom.EditTextLayout
         android:id="@+id/commentArea"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
             android:padding="8dp"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray" />
-    </co.usersource.anno.view.custom.EditTextLayout>
+    </io.usersource.anno.view.custom.EditTextLayout>
 
     <Button
         android:id="@+id/btnComment"
