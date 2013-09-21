@@ -1,5 +1,7 @@
 package io.usersource.annoplugin.view;
 
+import android.content.*;
+import android.widget.Toast;
 import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.datastore.FileImageManage;
@@ -21,10 +23,6 @@ import java.lang.ref.WeakReference;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.AsyncQueryHandler;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -122,6 +120,7 @@ public class FeedbackEditActivity extends Activity {
     }
   }
 
+
   private View.OnFocusChangeListener commentBoxFocusListener = new OnFocusChangeListener() {
 
     @Override
@@ -179,6 +178,13 @@ public class FeedbackEditActivity extends Activity {
 
         storeCommentInLocalDB(comment, imageKey, y, x, circleOnTop, isMoved,
             level);
+
+          if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT)
+          {
+              Toast.makeText(FeedbackEditActivity.this, "You've made your first anno!", Toast.LENGTH_SHORT).show();
+              AnnoPlugin.FIRST_ANNO_SENT = true;
+          }
+
       } catch (IOException e) {
         Log.e(TAG, e.getMessage());
         ViewUtils.displayError(FeedbackEditActivity.this, e.getMessage());

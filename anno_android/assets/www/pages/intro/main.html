@@ -19,7 +19,29 @@
     </script>
     <script type="text/javascript" src="../../scripts/dojo/dojo.js"></script>
     <script>
-        require(["dojo/ready", "dojo/_base/connect", "dojo/_base/lang", "dijit/registry", "dojox/mobile/deviceTheme","dojo/parser","dojox/mobile/compat"], function(ready, connect, lang, registry)
+        var frame = 0;
+        var intervalHandle = null;
+        var frameInterval = 240;
+        var frameInterval2 = 340;
+
+        var gotoMainActivity = function()
+        {
+            cordova.exec(
+                    function (data)
+                    {
+
+                    },
+                    function (err)
+                    {
+                        alert(err);
+                    },
+                    "CordovaHttpService",
+                    'exit_intro',
+                    []
+            );
+        };
+
+        require(["dojo/ready", "dojo/_base/connect", "dojo/dom-geometry", "dojo/window", "dojo/_base/lang", "dijit/registry", "dojox/mobile/deviceTheme","dojo/parser","dojox/mobile/compat"], function(ready, connect, domGeom, win, lang, registry)
         {
             nextView = function ()
             {
@@ -35,108 +57,296 @@
 
             };
 
-            var gotoMainActivity = function()
+            var initFn = function()
             {
-                console.error("need goto main activity.");
-                cordova.exec(
-                        function (data)
-                        {
+                var spacerDiv = document.getElementById('spacerDiv'), viewpoint = win.getBox();
+                spacerDiv.style.height = (viewpoint.h-456)/2+ "px";
+                document.getElementById('spacerDiv2').style.height = (viewpoint.h-456)/2+ "px";
+                document.getElementById('spacerDiv3').style.height = (viewpoint.h-456)/2+ "px";
 
-                        },
-                        function (err)
-                        {
-                            alert(err);
-                        },
-                        "CordovaHttpService",
-                        'exit_community',
-                        []
-                );
+                var screenbg = document.getElementById('screenBg');
+
+                var frameX = (viewpoint.w-341)/2, frameY = (viewpoint.h-456)/2;
+
+                screenbg.style.top = (frameY + 100) + "px";
+                screenbg.style.left = (frameX +100+17) + "px";
+                screenbg.style.display = '';
+
+                var screenbbg = document.getElementById('screenBlackBg');
+
+                screenbbg.style.top = (frameY + 100) + "px";
+                screenbbg.style.left = (frameX +100+16) + "px";
+
+                var dotImg = document.getElementById('dotImg1');
+
+                dotImg.style.top = (frameY + 158) + "px";
+                dotImg.style.left = (frameX+81) + "px";
+
+                dotImg = document.getElementById('dotImg2');
+
+                dotImg.style.top = (frameY + 298) + "px";
+                dotImg.style.left = (frameX+168) + "px";
+
+                dotImg = document.getElementById('dotImg3');
+
+                dotImg.style.top = (frameY + 94) + "px";
+                dotImg.style.left = (frameX+208) + "px";
+
+                var circleImg = document.getElementById('circleImg1');
+
+                circleImg.style.top = (frameY + 142) + "px";
+                circleImg.style.left = (frameX+65) + "px";
+
+                circleImg = document.getElementById('circleImg2');
+
+                circleImg.style.top = (frameY + 282) + "px";
+                circleImg.style.left = (frameX+152) + "px";
+
+                circleImg = document.getElementById('circleImg3');
+
+                circleImg.style.top = (frameY + 78) + "px";
+                circleImg.style.left = (frameX+198) + "px";
+
+                circleImg = document.getElementById('circleImg21');
+
+                circleImg.style.top = (frameY + 137) + "px";
+                circleImg.style.left = (frameX+62) + "px";
+
+                circleImg = document.getElementById('circleImg22');
+
+                circleImg.style.top = (frameY + 278) + "px";
+                circleImg.style.left = (frameX+149) + "px";
+
+                circleImg = document.getElementById('circleImg23');
+
+                circleImg.style.top = (frameY + 74) + "px";
+                circleImg.style.left = (frameX+194) + "px";
+
+                _checkCSSTransitionFeature();
+
+                window.setTimeout(function(){
+                    intervalHandle = window.setInterval(doAnim1, frameInterval);
+                }, 1200);
             };
 
             ready(function ()
             {
-                document.getElementById('introText2').style.display = '';
-                document.getElementById('introText3').style.display = '';
-                document.getElementById('introText4').style.display = '';
-                document.getElementById('introText5').style.display = '';
+                var spacerDiv = document.getElementById('spacerDiv'), viewpoint = win.getBox();
+                spacerDiv.style.height = (viewpoint.h-456)/2+ "px";
+                document.getElementById('spacerDiv2').style.height = (viewpoint.h-456)/2+ "px";
+                document.getElementById('spacerDiv3').style.height = (viewpoint.h-456)/2+ "px";
 
-                var lastView = registry.byId('view5');
-
-                lastView.set('scrollTo', function (to)
-                {
-                    // Overrides dojox/mobile/scrollable.scrollTo().
-                    if (!this._beingFlipped)
-                    {
-                        var newView, x;
-                        if (to.x < 0)
-                        {
-                            newView = this.nextView(this.domNode);
-                            x = to.x + this.domNode.offsetWidth;
-                        } else
-                        {
-                            newView = this.previousView(this.domNode);
-                            x = to.x - this.domNode.offsetWidth;
-                        }
-                        if (newView)
-                        {
-                            if (newView.domNode.style.display === "none")
-                            {
-                                newView.domNode.style.display = "";
-                                newView.resize();
-                            }
-                            newView._beingFlipped = true;
-                            newView.scrollTo({x: x});
-                            newView._beingFlipped = false;
-                        }
-                        else
-                        {
-                            gotoMainActivity();
-                        }
-                    }
-
-                    arguments.callee.nom = "scrollTo";
-                    this.inherited(arguments);
-                });
-
-                window.setTimeout(function (){
-                    registry.byId('pid').domNode.style.bottom = '4px';
-                }, 500);
-
+                window.setTimeout(initFn, 5);
             });
+
+
+            doAnim1 = function()
+            {
+                if (frame == 0)
+                {
+                    document.getElementById('dotImg1').style.display = '';
+                    document.getElementById('dotImg2').style.display = '';
+                    document.getElementById('dotImg3').style.display = '';
+                }
+                else if (frame == 1)
+                {
+                    document.getElementById('dotImg1').style.display = 'none';
+                    document.getElementById('circleImg1').style.display = '';
+                    document.getElementById('dotImg2').style.display = 'none';
+                    document.getElementById('circleImg2').style.display = '';
+                    document.getElementById('dotImg3').style.display = 'none';
+                    document.getElementById('circleImg3').style.display = '';
+                }
+                else if (frame == 2)
+                {
+                    document.getElementById('circleImg1').style.display = 'none';
+                    document.getElementById('circleImg21').style.display = '';
+                    document.getElementById('circleImg2').style.display = 'none';
+                    document.getElementById('circleImg22').style.display = '';
+                    document.getElementById('circleImg3').style.display = 'none';
+                    document.getElementById('circleImg23').style.display = '';
+                }
+                else if (frame == 3)
+                {
+                    document.getElementById('circleImg21').style.display = 'none';
+                    document.getElementById('circleImg22').style.display = 'none';
+                    document.getElementById('circleImg23').style.display = 'none';
+
+                    document.getElementById('screenBlackBg').style.display = '';
+
+                    document.getElementById('screenBg').style[transformAttrName] = 'rotate(-9deg) scale(0.5)';
+                }
+
+                if (frame == 3)
+                {
+                    frame = 0;
+                    window.clearInterval(intervalHandle);
+                    window.setTimeout(function(){
+                        registry.byId('view1').performTransition("view2", 1, "slide");
+                        window.setTimeout(function(){
+                            intervalHandle = window.setInterval(doAnim2, frameInterval);
+                        }, 800);
+                    }, 580);
+                }
+                else
+                {
+                    frame++;
+                }
+            };
+
+            doAnim2 = function()
+            {
+                if (frame ==1)
+                {
+                    document.getElementById('sc_1').style.display = '';
+                    document.getElementById('spacerDiv_sc').style.height = "20px";
+                }
+                else if (frame ==2)
+                {
+                    document.getElementById('spacerDiv_sc').style.height = "40px";
+                    document.getElementById('sc_1').style.display = 'none';
+                    document.getElementById('sc_2').style.display = '';
+                    document.getElementById('sc_3').style.display = '';
+                }
+
+                if (frame == 2)
+                {
+                    frame++;
+                    window.clearInterval(intervalHandle);
+                    intervalHandle = window.setInterval(doAnim2_sub, frameInterval2);
+                }
+                else
+                {
+                    frame++;
+                }
+            };
+
+            doAnim2_sub = function()
+            {
+                if (frame ==2)
+                {
+                    document.getElementById('spacerDiv_sc').style.height = "40px";
+                    document.getElementById('sc_1').style.display = 'none';
+                    document.getElementById('sc_2').style.display = '';
+                    document.getElementById('sc_3').style.display = '';
+                }
+                else if (frame ==3)
+                {
+                    document.getElementById('spacerDiv_sc').style.height = "40px";
+                    document.getElementById('sc_3').style.display = 'none';
+                    document.getElementById('sc_4').style.display = '';
+                }
+
+                if (frame == 3)
+                {
+                    frame = 0;
+                    window.clearInterval(intervalHandle);
+                    window.setTimeout(function(){
+                        registry.byId('view2').performTransition("view3", 1, "slide");
+                        window.setTimeout(function(){
+                            intervalHandle = window.setInterval(doAnim3, frameInterval);
+                        }, 800);
+                    }, frameInterval+200);
+                }
+                else
+                {
+                    frame++;
+                }
+            };
+
+            doAnim3 = function()
+            {
+                if (frame == 1)
+                {
+                    document.getElementById('sc_caImage').src = "css/images/sc_ca2.png";
+                }
+                else if (frame == 2)
+                {
+                    document.getElementById('sc_caImage').src = "css/images/sc_ca3.png";
+                }
+
+                if (frame == 3)
+                {
+                    frame = 0;
+                    window.clearInterval(intervalHandle);
+                    window.setTimeout(function(){
+                        gotoMainActivity();
+                    }, frameInterval+200);
+                }
+                else
+                {
+                    frame++;
+                }
+            };
+
+            var _checkCSSTransitionFeature = function()
+            {
+                var el = document.getElementById('frameImg');
+                var transitions = {
+                    'OTransition': {end: 'oTransitionEnd', transform: 'OTransform'},
+                    'MozTransition': {end: 'transitionend', transform: 'MozTransform'},
+                    'WebkitTransition': {end: 'webkitTransitionEnd', transform: 'WebkitTransform'},
+                    'msTransition': {end: 'MSTransitionEnd', transform: 'msTransform'},
+                    'transition': {end: 'transitionend', transform: 'transform'}
+                };
+
+                for (var p in transitions)
+                {
+                    if (el.style[p] !== undefined)
+                    {
+                        transitionAttrName = p;
+                        transformAttrName = transitions[p].transform;
+                        break;
+                    }
+                }
+            };
         });
     </script>
-    <script type="text/javascript" src="../community/cordova.js"></script>
+    <script type="text/javascript" src="../community/cordova-min.js"></script>
 </head>
 <body id="container">
-<div id="view1" data-dojo-type="dojox/mobile/SwapView">
-    <img alt="" width="100%" src="css/images/1.jpg">
-    <div class="introText">Tell the world how to make apps better for you in 3 easy steps!</div>
+<div id="view1" data-dojo-type="dojox/mobile/View" selected="true">
+    <div id="spacerDiv"></div>
+    <img alt="" id="frameImg" style="position: relative" src="css/images/1.png">
+    <img alt="" id="screenBlackBg" class="screenbg" style="display: none" width="102" height="190" src="css/images/blackbg.png">
+    <img alt="" id="screenBg" class="screenbg" style="display: none;" width="102" height="190" src="css/images/bg.jpg">
+    <img alt="" id="dotImg1" class="dotImg" style="display: none" src="css/images/dot1.png">
+    <img alt="" id="dotImg2" class="dotImg" style="display: none" src="css/images/dot1.png">
+    <img alt="" id="dotImg3" class="dotImg" style="display: none" src="css/images/dot1.png">
+
+    <img alt="" id="circleImg1" class="circleImg" style="display: none" src="css/images/circle1.png">
+    <img alt="" id="circleImg2" class="circleImg" style="display: none" src="css/images/circle1.png">
+    <img alt="" id="circleImg3" class="circleImg" style="display: none" src="css/images/circle1.png">
+
+    <img alt="" id="circleImg21" class="circleImg" style="display: none" src="css/images/circle2.png">
+    <img alt="" id="circleImg22" class="circleImg" style="display: none" src="css/images/circle2.png">
+    <img alt="" id="circleImg23" class="circleImg" style="display: none" src="css/images/circle2.png">
+</div>
+<div id="view2" data-dojo-type="dojox/mobile/View">
+    <div id="spacerDiv2"></div>
+    <div style="width: 341px;height: 456px;background: #000000;margin-left: auto;margin-right: auto;">
+        <div id="spacerDiv_sc"></div>
+        <div style="height: 65px">
+            <img alt="" src="css/images/sc_title.png">
+        </div>
+        <div id="sc_1" style="height: 83px;display: none;">
+            <img alt="" src="css/images/sc_1.png">
+        </div>
+        <div id="sc_2" style="height: 83px;display: none;">
+            <img alt="" src="css/images/sc_2.png">
+        </div>
+        <div id="sc_3" style="height: 83px;display: none;">
+            <img alt="" src="css/images/sc_3.png">
+        </div>
+        <div id="sc_4" style="height: 83px;display: none;">
+            <img alt="" src="css/images/sc_4.png">
+        </div>
+    </div>
 </div>
 
-<div id="view2" data-dojo-type="dojox/mobile/SwapView">
-    <img alt="" width="100%" src="css/images/1.jpg">
-    <div class="introText" id="introText2" style="display: none;">1: Take a screenshot on your phone by pressing hardware keys like this:
-        <br>&nbsp;* Power + Volume down or
-        <br>&nbsp;* Power + Home or
-        <br>&nbsp;* Power + Home + volume down</div>
+<div id="view3" data-dojo-type="dojox/mobile/View">
+    <div id="spacerDiv3"></div>
+    <img alt="" id="sc_caImage" src="css/images/sc_ca1.png">
 </div>
-
-<div id="view3" data-dojo-type="dojox/mobile/SwapView">
-    <img alt="" width="100%" src="css/images/1.jpg">
-    <div class="introText" id="introText3" style="display: none;">2: Use the "Share" menu to pass the screenshot to Anno.</div>
-</div>
-
-<div id="view4" data-dojo-type="dojox/mobile/SwapView">
-    <img alt="" width="100%" src="css/images/1.jpg">
-    <div class="introText" id="introText4" style="display: none;">3: Point the orange circle where you want to type your idea, then tap "Send".</div>
-</div>
-
-<div id="view5" data-dojo-type="dojox/mobile/SwapView">
-    <img alt="" width="100%" src="css/images/1.jpg">
-    <div class="introText" id="introText5" style="display: none;">That's it, you made an anno! You'll be back in your app now. Launch Anno to discuss annos in the community feed.</div>
-</div>
-
-<div data-dojo-type="dojox/mobile/PageIndicator" id="pid" data-dojo-props='fixed:"bottom"'></div>
-<div id="navBtnNext" class="icon-arrow-right" onclick="nextView()"></div>
 </body>
 </html>
