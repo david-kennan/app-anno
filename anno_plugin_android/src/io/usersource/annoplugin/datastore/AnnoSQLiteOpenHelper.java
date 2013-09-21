@@ -21,7 +21,7 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
 
   public static final String DATABASE_NAME = "anno.db";
   /** Version for upgrade routines. */
-  public static final int DATABASE_VERSION = 6;
+  public static final int DATABASE_VERSION = 7;
 
   /* table adapters */
   private TableAdapter tableCommentFeedbackAdapter;
@@ -111,6 +111,16 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
           TableCommentFeedbackAdapter.TABLE_NAME,
           TableCommentFeedbackAdapter.COL_LEVEL, 1);
       database.execSQL(sql);
+    } else if (oldVersion == 6 && newVersion == 7) {
+      String sql = String.format(addColumnSql,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_SOURCE, "text");
+      database.execSQL(sql);
+      Log.d(TAG, "upgrade db:" + sql);
+      sql = String.format(updateOneValue,
+          TableCommentFeedbackAdapter.TABLE_NAME,
+          TableCommentFeedbackAdapter.COL_SOURCE, "standalone");
+      database.execSQL(sql);
     }
   }
 
@@ -124,9 +134,9 @@ public class AnnoSQLiteOpenHelper extends SQLiteOpenHelper {
   public TableAdapter getTableLastSyncAdapter() {
     return tableLastSyncAdapter;
   }
-  
+
   public TableAdapter getTableUsersAdapter() {
-	    return tableUsersAdapter;
+    return tableUsersAdapter;
   }
 
   /**

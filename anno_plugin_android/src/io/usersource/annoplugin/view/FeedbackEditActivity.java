@@ -8,6 +8,7 @@ import io.usersource.annoplugin.datastore.TableCommentFeedbackAdapter;
 import io.usersource.annoplugin.model.AnnoContentProvider;
 import io.usersource.annoplugin.sync.AnnoSyncAdapter;
 import io.usersource.annoplugin.utils.AppConfig;
+import io.usersource.annoplugin.utils.Constants;
 import io.usersource.annoplugin.utils.ImageUtils;
 import io.usersource.annoplugin.utils.PluginUtils;
 import io.usersource.annoplugin.utils.SystemUtils;
@@ -171,7 +172,6 @@ public class FeedbackEditActivity extends Activity {
         // coordinate
         float y = commentAreaLayout.getY();
         float x = commentAreaLayout.getCircleX();
-        Log.d(TAG, "coordinate y:" + y + "x:" + x);
         // direction
         boolean circleOnTop = commentAreaLayout.circleOnTop();
         // is moved
@@ -295,6 +295,13 @@ public class FeedbackEditActivity extends Activity {
     values.put(TableCommentFeedbackAdapter.COL_APP_NAME,
         SystemUtils.getAppName(FeedbackEditActivity.this));
     values.put(TableCommentFeedbackAdapter.COL_MODEL, SystemUtils.getModel());
+    if (PluginUtils.isAnno(getPackageName()) && this.level != 2) {
+      values.put(TableCommentFeedbackAdapter.COL_SOURCE,
+          Constants.ANNO_SOURCE_STANDALONE);
+    } else {
+      values.put(TableCommentFeedbackAdapter.COL_SOURCE,
+          Constants.ANNO_SOURCE_PLUGIN);
+    }
     handler.startInsert(TOKEN_INSERT_COMMENT, null,
         AnnoContentProvider.COMMENT_PATH_URI, values);
   }

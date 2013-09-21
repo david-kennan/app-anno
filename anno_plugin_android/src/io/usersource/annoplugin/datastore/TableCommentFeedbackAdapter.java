@@ -35,9 +35,10 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
   // col_timestamp & col_object_key is used for synchronization
   public static final String COL_TIMESTAMP = "last_update";
   public static final String COL_OBJECT_KEY = "object_key";
+  public static final String COL_SOURCE = "source";
 
   public static final String TABLE_NAME = "feedback_comment";
-  
+
   public TableCommentFeedbackAdapter(SQLiteOpenHelper sqliteOpenHelper) {
     super(sqliteOpenHelper);
   }
@@ -53,12 +54,12 @@ public class TableCommentFeedbackAdapter extends AbstractTableAdapter {
         + "(%s integer primary key autoincrement, " + "%s text not null, "
         + "%s text not null, " + "%s integer not null, "
         + "%s integer not null, " + "%s integer not null, " + "%s text, "
-        + "%s text," + "%s integer not null, "
-        + "%s text, " + "%s integer not null, "
-        + "%s integer not null, %s text, %s text);", TABLE_NAME, COL_ID,
-        COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X, COL_POSITION_Y,
-        COL_DIRECTION, COL_APP_VERSION, COL_OS_VERSION, COL_TIMESTAMP,
-        COL_OBJECT_KEY, COL_MOVED, COL_LEVEL, COL_APP_NAME, COL_MODEL);
+        + "%s text," + "%s integer not null, " + "%s text, "
+        + "%s integer not null, " + "%s integer not null, %s text, %s text, %s text);",
+        TABLE_NAME, COL_ID, COL_COMMENT, COL_SCREENSHOT_KEY, COL_POSITION_X,
+        COL_POSITION_Y, COL_DIRECTION, COL_APP_VERSION, COL_OS_VERSION,
+        COL_TIMESTAMP, COL_OBJECT_KEY, COL_MOVED, COL_LEVEL, COL_APP_NAME,
+        COL_MODEL, COL_SOURCE);
 
     List<String> initSqls = new ArrayList<String>();
     initSqls.add(createTableSql);

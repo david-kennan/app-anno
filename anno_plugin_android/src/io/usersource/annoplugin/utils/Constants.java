@@ -13,4 +13,7 @@ public class Constants {
   // if image size exceeds this threshold, anno will compress and send to
   // server.
   public static final long IMAGE_SIZE_THRESHOLD = 500 * 1024;
+
+  public static final String ANNO_SOURCE_PLUGIN = "plugin";
+  public static final String ANNO_SOURCE_STANDALONE = "standalone";
 }
