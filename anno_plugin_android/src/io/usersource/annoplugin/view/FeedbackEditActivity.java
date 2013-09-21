@@ -1,7 +1,5 @@
 package io.usersource.annoplugin.view;
 
-import android.content.*;
-import android.widget.Toast;
 import io.usersource.annoplugin.AnnoPlugin;
 import io.usersource.annoplugin.R;
 import io.usersource.annoplugin.datastore.FileImageManage;
@@ -23,6 +21,10 @@ import java.lang.ref.WeakReference;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,6 +36,7 @@ import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 /**
  * Edit feedback screen from share intent.
@@ -120,7 +123,6 @@ public class FeedbackEditActivity extends Activity {
     }
   }
 
-
   private View.OnFocusChangeListener commentBoxFocusListener = new OnFocusChangeListener() {
 
     @Override
@@ -169,6 +171,7 @@ public class FeedbackEditActivity extends Activity {
         // coordinate
         float y = commentAreaLayout.getY();
         float x = commentAreaLayout.getCircleX();
+        Log.d(TAG, "coordinate y:" + y + "x:" + x);
         // direction
         boolean circleOnTop = commentAreaLayout.circleOnTop();
         // is moved
@@ -179,11 +182,11 @@ public class FeedbackEditActivity extends Activity {
         storeCommentInLocalDB(comment, imageKey, y, x, circleOnTop, isMoved,
             level);
 
-          if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT)
-          {
-              Toast.makeText(FeedbackEditActivity.this, "You've made your first anno!", Toast.LENGTH_SHORT).show();
-              AnnoPlugin.FIRST_ANNO_SENT = true;
-          }
+        if (AnnoPlugin.FIRST_LAUNCH && !AnnoPlugin.FIRST_ANNO_SENT) {
+          Toast.makeText(FeedbackEditActivity.this,
+              "You've made your first anno!", Toast.LENGTH_SHORT).show();
+          AnnoPlugin.FIRST_ANNO_SENT = true;
+        }
 
       } catch (IOException e) {
         Log.e(TAG, e.getMessage());
@@ -227,6 +230,10 @@ public class FeedbackEditActivity extends Activity {
       try {
         drawable = new BitmapDrawable(getResources(),
             rc.openInputStream(imageUri));
+        if (ImageUtils.IMAGE_ORIENTATION_LANDSCAPE.equals(ImageUtils
+            .isLandscapeOrPortrait(drawable))) {
+          drawable = ImageUtils.rotateImage(drawable, 90);
+        }
         imvScreenshot.setBackgroundDrawable(drawable);
       } catch (FileNotFoundException e) {
         Log.e(TAG, e.getMessage(), e);

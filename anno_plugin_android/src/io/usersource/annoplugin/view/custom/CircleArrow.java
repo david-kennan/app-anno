@@ -321,7 +321,9 @@ public class CircleArrow extends View implements View.OnTouchListener {
       break;
     case MotionEvent.ACTION_UP:
       flag = false;
-      AnnoPlugin.setEnableGesture(activity, R.id.gestures, true);
+      if (isMovable) {
+        AnnoPlugin.setEnableGesture(activity, R.id.gestures, true);
+      }
       break;
     }
     return true;

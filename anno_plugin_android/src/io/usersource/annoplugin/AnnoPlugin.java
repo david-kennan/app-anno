@@ -14,8 +14,8 @@ import android.gesture.GestureOverlayView;
  */
 public class AnnoPlugin {
 
-    public static boolean FIRST_LAUNCH = false;
-    public static boolean FIRST_ANNO_SENT = false;
+  public static boolean FIRST_LAUNCH = false;
+  public static boolean FIRST_ANNO_SENT = false;
 
   /**
    * Enable taking screenshot by certain gesture.
@@ -25,16 +25,10 @@ public class AnnoPlugin {
    */
   public static void setEnableGesture(Activity activity, int gestureViewId,
       boolean enabled) {
-    GestureOverlayView gestureOverlayView = (GestureOverlayView) activity
-        .findViewById(gestureViewId);
-    if (enabled) {
-      gestureOverlayView.setGestureVisible(false);
-      ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
-          activity, R.raw.gestures);
-      gestureOverlayView
-          .addOnGesturePerformedListener(gesturePerformedListener);
-    } else {
-      gestureOverlayView.removeAllOnGesturePerformedListeners();
+    if (activity != null) {
+      GestureOverlayView gestureOverlayView = (GestureOverlayView) activity
+          .findViewById(gestureViewId);
+      setEnableGesture(activity, gestureOverlayView, enabled);
     }
   }
 
@@ -46,14 +40,16 @@ public class AnnoPlugin {
    */
   public static void setEnableGesture(Activity activity,
       GestureOverlayView gestureOverlayView, boolean enabled) {
-    if (enabled) {
-      gestureOverlayView.setGestureVisible(false);
-      ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
-          activity, R.raw.gestures);
-      gestureOverlayView
-          .addOnGesturePerformedListener(gesturePerformedListener);
-    } else {
-      gestureOverlayView.removeAllOnGesturePerformedListeners();
+    if (activity != null) {
+      if (enabled) {
+        gestureOverlayView.setGestureVisible(false);
+        ScreenshotGestureListener gesturePerformedListener = new ScreenshotGestureListener(
+            activity, R.raw.gestures);
+        gestureOverlayView
+            .addOnGesturePerformedListener(gesturePerformedListener);
+      } else {
+        gestureOverlayView.removeAllOnGesturePerformedListeners();
+      }
     }
   }
 

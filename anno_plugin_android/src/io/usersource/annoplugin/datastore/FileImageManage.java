@@ -137,7 +137,9 @@ public class FileImageManage implements ImageManage {
     File imageFile = new File(screenshotDirPath, key);
     Log.d(TAG, "image-" + key + " original size is " + imageFile.length()
         + " bytes.");
-    Bitmap bm = getSmallBitmap(imageFile.getAbsolutePath());
+    // TODO: disable compression, since this may affect circle position.
+    // Bitmap bm = getSmallBitmap(imageFile.getAbsolutePath());
+    Bitmap bm = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     bm.compress(Bitmap.CompressFormat.PNG, COMPRESS_QUALITY, baos);
