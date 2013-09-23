@@ -23,9 +23,14 @@
         var intervalHandle = null;
         var frameInterval = 240;
         var frameInterval2 = 340;
+        var wentToMainActivity = false;
 
         var gotoMainActivity = function()
         {
+            if (wentToMainActivity) return;
+
+            wentToMainActivity = true;
+
             cordova.exec(
                     function (data)
                     {
@@ -41,7 +46,8 @@
             );
         };
 
-        require(["dojo/ready", "dojo/_base/connect", "dojo/dom-geometry", "dojo/window", "dojo/_base/lang", "dijit/registry", "dojox/mobile/deviceTheme","dojo/parser","dojox/mobile/compat"], function(ready, connect, domGeom, win, lang, registry)
+        require(["dojo/ready", "dojo/_base/connect", "dojo/dom-geometry", "dojo/dom-style", "dojo/window", "dojo/_base/lang", "dijit/registry", "dojox/gesture/swipe",
+            "dojox/gesture/tap","dojox/mobile/deviceTheme","dojo/parser","dojox/mobile/compat"], function(ready, connect, domGeom, domStyle, win, lang, registry)
         {
             nextView = function ()
             {
@@ -124,14 +130,181 @@
 
                 _checkCSSTransitionFeature();
 
-                window.setTimeout(function(){
+                /*window.setTimeout(function(){
                     intervalHandle = window.setInterval(doAnim1, frameInterval);
-                }, 1200);
+                }, 1200);*/
+            };
+
+            var getCurrentMainView = function()
+            {
+                var currentMainView = null, mainView = registry.byId('mainView1');
+
+                if (mainView.domNode.style.display == ""||mainView.domNode.style.display == "block")
+                {
+                    currentMainView = 1;
+                    return currentMainView;
+                }
+
+                mainView = registry.byId('mainView2');
+                if (mainView.domNode.style.display == ""||mainView.domNode.style.display == "block")
+                {
+                    currentMainView = 2;
+                    return currentMainView;
+                }
+
+                mainView = registry.byId('mainView3');
+                if (mainView.domNode.style.display == ""||mainView.domNode.style.display == "block")
+                {
+                    currentMainView = 3;
+                    return currentMainView;
+                }
+
+                return currentMainView;
+            };
+
+            var gotoMainView = function(cview, reverse)
+            {
+                if (cview == 1)
+                {
+                    if (!reverse)
+                        registry.byId('mainView1').performTransition("view1", 1, "slide", null, onFirstMainViewTransEnd);
+                }
+                else if (cview == 2)
+                {
+                    if (reverse)
+                    {
+                        initView1();
+                        registry.byId('mainView2').performTransition("mainView1", -1, "slide", null, onFirstMainViewShown);
+                    }
+                    else
+                    {
+                        registry.byId('mainView2').performTransition("view2", 1, "slide", null, onSecondMainViewTransEnd);
+                    }
+                }
+                else if (cview == 3)
+                {
+                    if (reverse)
+                    {
+                        initView2();
+                        initView3();
+                        registry.byId('mainView3').performTransition("mainView2", -1, "slide", null, onSecondMainViewShown);
+                    }
+                    else
+                    {
+                        gotoMainActivity();
+                    }
+                }
+            };
+
+            var onFirstMainViewTransEnd = function()
+            {
+                registry.byId('pid').domNode.style.display = 'none';
+                intervalHandle = window.setInterval(doAnim1, frameInterval);
+            };
+
+            var onFirstMainViewShown = function()
+            {
+                registry.byId('pid').domNode.style.display = '';
+                registry.byId('pid').reset();
+            };
+
+            var onSecondMainViewShown = function()
+            {
+                window.setTimeout(function(){
+                    if (registry.byId('mainView2').domNode.style.display != 'none')
+                    {
+                        registry.byId('mainView2').performTransition("view2", 1, "slide", null, onSecondMainViewTransEnd);
+                    }
+                }, 4000);
+
+                registry.byId('pid').domNode.style.display = '';
+                registry.byId('pid').reset();
+            };
+
+            var onSecondMainViewTransEnd = function()
+            {
+                registry.byId('pid').domNode.style.display = 'none';
+                window.setTimeout(function(){
+                    intervalHandle = window.setInterval(doAnim2, frameInterval);
+                }, 125);
+            };
+
+            var onThirdMainViewShown = function()
+            {
+                window.setTimeout(function(){
+                    if (registry.byId('mainView3').domNode.style.display != 'none')
+                    {
+                        gotoMainActivity();
+                    }
+                }, 4000);
+
+                registry.byId('pid').domNode.style.display = '';
+                registry.byId('pid').reset();
+            };
+
+            var initView1 = function()
+            {
+                frame = 0;
+                document.getElementById('screenBlackBg').style.display = 'none';
+                document.getElementById('screenBg').style[transformAttrName] = 'rotate(-9deg) scale(1)';
+            };
+
+            var initView2 = function()
+            {
+                frame = 0;
+                document.getElementById('spacerDiv_sc').style.height = "0px";
+                document.getElementById('sc_1').style.display = 'none';
+                document.getElementById('sc_2').style.display = 'none';
+                document.getElementById('sc_3').style.display = 'none';
+                document.getElementById('sc_4').style.display = 'none';
+            };
+
+            var initView3 = function()
+            {
+                frame = 0;
+                document.getElementById('sc_caImage').src = "css/images/sc_ca1.png";
             };
 
             ready(function ()
             {
                 var spacerDiv = document.getElementById('spacerDiv'), viewpoint = win.getBox();
+
+                registry.byId('mainView1').domNode.style.height = (viewpoint.h-20)+'px';
+                domStyle.set('titleMainView1', 'top', ((viewpoint.h-100)/2)+'px');
+
+                registry.byId('mainView2').domNode.style.height = (viewpoint.h-20)+'px';
+                domStyle.set('titleMainView2', 'top', ((viewpoint.h-100)/2)+'px');
+
+                registry.byId('mainView3').domNode.style.height = (viewpoint.h-20)+'px';
+                domStyle.set('titleMainView3', 'top', ((viewpoint.h-65)/2)+'px');
+
+                connect.connect(document.body, dojox.gesture.swipe.end, this, function (e)
+                {
+                    var currentMainView = getCurrentMainView();
+
+                    if (currentMainView&&Math.abs(e.dx) > 20 && e.time > 100)
+                    {
+                        var direction = e.dx > 0 ? "right" : "left";
+                        this._doingTransition = true;
+                        if (direction == "left")
+                        {
+                            gotoMainView(currentMainView);
+                        }
+                        else
+                        {
+                            gotoMainView(currentMainView, true);
+                        }
+                    }
+                });
+
+                connect.connect(document.body, dojox.gesture.tap, this, function (e)
+                {
+                    var currentMainView = getCurrentMainView();
+
+                    if (currentMainView)
+                        gotoMainView(currentMainView);
+                });
+
                 spacerDiv.style.height = (viewpoint.h-456)/2+ "px";
                 document.getElementById('spacerDiv2').style.height = (viewpoint.h-456)/2+ "px";
                 document.getElementById('spacerDiv3').style.height = (viewpoint.h-456)/2+ "px";
@@ -182,10 +355,10 @@
                     frame = 0;
                     window.clearInterval(intervalHandle);
                     window.setTimeout(function(){
-                        registry.byId('view1').performTransition("view2", 1, "slide");
-                        window.setTimeout(function(){
+                        registry.byId('view1').performTransition("mainView2", 1, "slide", null, onSecondMainViewShown);
+                        /*window.setTimeout(function(){
                             intervalHandle = window.setInterval(doAnim2, frameInterval);
-                        }, 800);
+                        }, 800);*/
                     }, 580);
                 }
                 else
@@ -269,9 +442,7 @@
                 {
                     frame = 0;
                     window.clearInterval(intervalHandle);
-                    window.setTimeout(function(){
-                        gotoMainActivity();
-                    }, frameInterval+200);
+                    registry.byId('view3').performTransition("mainView3", 1, "slide", null, onThirdMainViewShown);
                 }
                 else
                 {
@@ -301,11 +472,72 @@
                 }
             };
         });
+
+        function isView(node)
+        {
+            return (node && node.nodeType === 1) &&node.getAttribute("ismainview")=="1";
+        }
     </script>
     <script type="text/javascript" src="../community/cordova-min.js"></script>
+    <style>
+        .mblPageIndicatorDot
+        {
+            background-color: #949294;
+        }
+
+        .mblPageIndicatorDotSelected
+        {
+            background-color: #333333;
+        }
+    </style>
 </head>
-<body id="container">
-<div id="view1" data-dojo-type="dojox/mobile/View" selected="true">
+<body id="container" style="background-color: white;">
+<div id="mainView1" ismainview="1" style="background: white;" data-dojo-type="dojox/mobile/View" selected="true">
+    <div style="text-align: left;padding-left: 10px;padding-top: 10px;">
+        <img alt="" src="../community/css/images/anno.png">
+    </div>
+    <div style="color: green;text-align: left;padding-left: 15px;">
+        Anno
+    </div>
+    <div id="titleMainView1" style="position: absolute;height: 82px;width: 100%;">
+        <div style="text-align: center;padding-bottom: 15px;">
+            Start with a
+        </div>
+        <div style="text-align: center;font-weight: bold;font-size: 40px">
+            SCREENSHOT
+        </div>
+    </div>
+</div>
+<div id="mainView2" ismainview="1" style="background: white;" data-dojo-type="dojox/mobile/View">
+    <div style="text-align: left;padding-left: 10px;padding-top: 10px;">
+        <img alt="" src="../community/css/images/anno.png">
+    </div>
+    <div style="color: green;text-align: left;padding-left: 15px;">
+        Anno
+    </div>
+    <div id="titleMainView2" style="position: absolute;height: 82px;width: 100%;">
+        <div style="text-align: center;padding-bottom: 15px;">
+            Open system bar to
+        </div>
+        <div style="text-align: center;font-weight: bold;font-size: 40px">
+            SHARE
+        </div>
+    </div>
+</div>
+<div id="mainView3" ismainview="1" style="background: white;" data-dojo-type="dojox/mobile/View">
+    <div style="text-align: left;padding-left: 10px;padding-top: 10px;">
+        <img alt="" src="../community/css/images/anno.png">
+    </div>
+    <div style="color: green;text-align: left;padding-left: 15px;">
+        Anno
+    </div>
+    <div id="titleMainView3" style="position: absolute;height: 82px;width: 100%;">
+        <div style="text-align: center;font-weight: bold;font-size: 40px">
+            Anno<span style="color: #B7B7B7">tate</span>
+        </div>
+    </div>
+</div>
+<div id="view1" data-dojo-type="dojox/mobile/View">
     <div id="spacerDiv"></div>
     <img alt="" id="frameImg" style="position: relative" src="css/images/1.png">
     <img alt="" id="screenBlackBg" class="screenbg" style="display: none" width="102" height="190" src="css/images/blackbg.png">
@@ -343,10 +575,11 @@
         </div>
     </div>
 </div>
-
 <div id="view3" data-dojo-type="dojox/mobile/View">
     <div id="spacerDiv3"></div>
     <img alt="" id="sc_caImage" src="css/images/sc_ca1.png">
 </div>
+
+<div data-dojo-type="dojox/mobile/PageIndicator" id="pid" data-dojo-props='fixed:"bottom",isView:isView'></div>
 </body>
 </html>
